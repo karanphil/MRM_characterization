@@ -26,6 +26,9 @@ def _build_arg_parser():
     p.add_argument('--reference', default=[], required=True,
                    help='Reference image.')
     
+    p.add_argument('--wm_mask', default=[],
+                   help='WM mask image.')
+    
     p.add_argument('--slices', nargs=3, default=[],
                    action='append', required=True,
                    help='List indices for where to slice the images.')
@@ -44,6 +47,12 @@ def main():
 
     maps, _ = extract_measures(args.maps, data_shape)
     maps = np.ma.masked_where(maps == 0, maps)
+
+    if args.wm_mask:
+        mask = nib.load(args.wm_mask).get_fdata()
+        mask = (mask >= 0.9)
+    else:
+        mask = np.ones((data_shape))
 
     x_index = int(args.slices[0][0]) # 53, 54 or 55 (55)
     y_index = int(args.slices[0][1]) # 92, 93, or 94 (93)
@@ -66,9 +75,12 @@ def main():
         ax[i, 1].imshow(x_image, cmap="gray", vmin=0, vmax=1, interpolation='none')
         ax[i, 2].imshow(z_image, cmap="gray", vmin=0, vmax=1, interpolation='none')
 
-        x_mask = np.flip(np.rot90(maps[..., i][x_index, :, :]), axis=1)
-        y_mask = np.rot90(maps[..., i][:, y_index, :])
-        z_mask = np.rot90(maps[..., i][:, :, z_index])
+        map = maps[..., i] * mask
+        map = np.ma.masked_where(map == 0, map)
+
+        x_mask = np.flip(np.rot90(map[x_index, :, :]), axis=1)
+        y_mask = np.rot90(map[:, y_index, :])
+        z_mask = np.rot90(map[:, :, z_index])
 
         colorbar = ax[i, 0].imshow(y_mask, cmap=cm.navia, vmin=0, vmax=vmax[i], interpolation='none')
         ax[i, 1].imshow(x_mask, cmap=cm.navia, vmin=0, vmax=vmax[i], interpolation='none')
