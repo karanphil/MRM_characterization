@@ -15,9 +15,8 @@ from scilpy.io.utils import (add_overwrite_arg)
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    p.add_argument('out_folder',
-                   help='Path of the output folder for txt, png, masks and '
-                        'measures.')
+    p.add_argument('out_image',
+                   help='Path of the output image.')
     
     p.add_argument('--images', nargs='+', default=[],
                    action='append', required=True,
@@ -60,6 +59,12 @@ def main():
 
     plot_init(dims=(10, 15), font_size=20)
 
+    COLOR = 'white'
+    mpl.rcParams['text.color'] = COLOR
+    mpl.rcParams['axes.labelcolor'] = COLOR
+    mpl.rcParams['xtick.color'] = COLOR
+    mpl.rcParams['ytick.color'] = COLOR
+
     fig, ax = plt.subplots(images.shape[-1] + 1, 4,
                            gridspec_kw={"width_ratios":[1.2, 1.5, 1.0, 0.05]},
                            layout='constrained')
@@ -80,7 +85,9 @@ def main():
     ax[0, 1].imshow(x_mask, cmap=cm.navia, vmin=0, vmax=90, interpolation='none')
     ax[0, 2].imshow(z_mask, cmap=cm.navia, vmin=0, vmax=90, interpolation='none')
 
-    fig.colorbar(colorbar, cax=ax[0, 3], ax=ax[0, 3])
+    cb = fig.colorbar(colorbar, cax=ax[0, 3], ax=ax[0, 3])
+    cb.outline.set_color('white')
+    cb.set_ticks([0, 30, 60, 90])
 
     for i in range(images.shape[-1]):
         x_image = np.flip(np.rot90(images[..., i][x_index, :, :]), axis=1)
@@ -91,7 +98,8 @@ def main():
         ax[i + 1, 1].imshow(x_image, cmap="gray", vmin=vmin[i], vmax=vmax[i], interpolation='none')
         ax[i + 1, 2].imshow(z_image, cmap="gray", vmin=vmin[i], vmax=vmax[i], interpolation='none')
 
-        fig.colorbar(colorbar, cax=ax[i + 1, 3])
+        cb = fig.colorbar(colorbar, cax=ax[i + 1, 3])
+        cb.outline.set_color('white')
 
     for i in range(ax.shape[0]):
         for j in range(ax.shape[1] - 1):
@@ -143,7 +151,7 @@ def main():
     fig.get_layout_engine().set(h_pad=0, hspace=0)
     # fig.tight_layout()
     # plt.show()
-    plt.savefig("toto.png", dpi=300, transparent=True)
+    plt.savefig(args.out_image, dpi=300, transparent=True)
 
 
 

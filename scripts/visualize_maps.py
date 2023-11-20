@@ -15,9 +15,8 @@ from scilpy.io.utils import (add_overwrite_arg)
 def _build_arg_parser():
     p = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
-    p.add_argument('out_folder',
-                   help='Path of the output folder for txt, png, masks and '
-                        'measures.')
+    p.add_argument('out_image',
+                   help='Path of the output image.')
     
     p.add_argument('--maps', nargs='+', default=[],
                    action='append', required=True,
@@ -32,6 +31,9 @@ def _build_arg_parser():
     p.add_argument('--slices', nargs=3, default=[],
                    action='append', required=True,
                    help='List indices for where to slice the images.')
+    
+    p.add_argument('--combine_colorbar', action='store_false',
+                   help='Combine colorbar or not.')
 
     add_overwrite_arg(p)
     return p
@@ -62,9 +64,20 @@ def main():
 
     plot_init(dims=(10, 15), font_size=20)
 
-    fig, ax = plt.subplots(maps.shape[-1], 4,
-                           gridspec_kw={"width_ratios":[1.2, 1.5, 1.0, 0.05]},
-                           layout='constrained')
+    COLOR = 'white'
+    mpl.rcParams['text.color'] = COLOR
+    mpl.rcParams['axes.labelcolor'] = COLOR
+    mpl.rcParams['xtick.color'] = COLOR
+    mpl.rcParams['ytick.color'] = COLOR
+
+    if args.combine_colorbar:
+        fig, ax = plt.subplots(maps.shape[-1], 3,
+                               gridspec_kw={"width_ratios":[1.0, 1.1, 0.7]},
+                               layout='constrained')
+    else:
+        fig, ax = plt.subplots(maps.shape[-1], 4,
+                               gridspec_kw={"width_ratios":[1.1, 1.3, 1.0, 0.05]},
+                               layout='constrained')
 
     for i in range(maps.shape[-1]):
         x_image = np.flip(np.rot90(ref[x_index, :, :]), axis=1)
@@ -86,17 +99,26 @@ def main():
         ax[i, 1].imshow(x_mask, cmap=cm.navia, vmin=0, vmax=vmax[i], interpolation='none')
         ax[i, 2].imshow(z_mask, cmap=cm.navia, vmin=0, vmax=vmax[i], interpolation='none')
 
-        fig.colorbar(colorbar, cax=ax[i, 3])
+        if args.combine_colorbar:
+            if i == 1:
+                cb = fig.colorbar(colorbar, ax=ax[0:3, 2], location='right', aspect=50, pad=0.1)
+                cb.outline.set_color('white')
+            if i == 4:
+                cb = fig.colorbar(colorbar, ax=ax[3:, 2], location='right', aspect=33, pad=0.1)
+                cb.outline.set_color('white')
+        else:
+            cb = fig.colorbar(colorbar, ax=ax[i, 3])
+            cb.outline.set_color('white')
 
     for i in range(ax.shape[0]):
-        for j in range(ax.shape[1] - 1):
+        for j in range(ax.shape[1]):
             ax[i, j].set_axis_off()
             ax[i, j].autoscale(False)
 
-    fig.get_layout_engine().set(h_pad=0, hspace=0)
+    fig.get_layout_engine().set(h_pad=0.1, hspace=0.1) #, w_pad=0, wspace=0)
     # fig.tight_layout()
     # plt.show()
-    plt.savefig("toto2.png", dpi=300, transparent=True)
+    plt.savefig(args.out_image, dpi=300, transparent=True)
 
 
 
