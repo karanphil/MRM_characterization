@@ -2,7 +2,6 @@ import argparse
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import nibabel as nib
 from pathlib import Path
 from scipy.interpolate import splrep, BSpline
 
@@ -18,7 +17,7 @@ def _build_arg_parser():
                    help='Path of the output name.')
     
     p.add_argument('--in_results', nargs='+',
-                   help='List of all results.')
+                   help='List of all results directories.')
     p.add_argument('--sub_id', type=int,
                    help='ID of the selected subject.')
     p.add_argument('--ses_id', type=int,
@@ -39,7 +38,7 @@ def main():
 
     results = args.in_results
 
-    file_name = "/results_txt/WB_single_fiber_mt{0}_ihmt{0}_results_0.5_fa_thr_1_bin_width.txt"
+    file_name = "/new_characterization/1f_original_results.npz"
     ses_id = args.ses_id - 1
     min_nb_voxels = args.min_nb_voxels
 
@@ -50,11 +49,17 @@ def main():
     subjects = np.unique(np.asarray(subjects))
 
     dummy = results[0]
-    dims = np.loadtxt(dummy + file_name.format("r"), skiprows=1).shape
-    ratio_sub = np.zeros(((len(subjects),) + dims))
-    satur_sub = np.zeros(((len(subjects),) + dims))
-    ratio_ses = np.zeros(((5,) + dims))
-    satur_ses = np.zeros(((5,) + dims))
+    dims = np.load(dummy + file_name)["MTR"].shape
+    mtr_sub = np.zeros(((len(subjects),) + dims))
+    mtsat_sub = np.zeros(((len(subjects),) + dims))
+    ihmtr_sub = np.zeros(((len(subjects),) + dims))
+    ihmtsat_sub = np.zeros(((len(subjects),) + dims))
+    nb_voxels_sub = np.zeros(((len(subjects),) + dims))
+    mtr_ses = np.zeros(((5,) + dims))
+    mtsat_ses = np.zeros(((5,) + dims))
+    ihmtr_ses = np.zeros(((5,) + dims))
+    ihmtsat_ses = np.zeros(((5,) + dims))
+    nb_voxels_ses = np.zeros(((5,) + dims))
     labels_sub = np.zeros((len(subjects)), dtype=object)
 
     for i, subject in enumerate(subjects):
@@ -62,30 +67,26 @@ def main():
         sessions = list(Path('.').glob(subject + "*"))
         for j, session in enumerate(sessions[:5]):
             print(session)
-            ratio_sub[i] += np.loadtxt(str(session) + file_name.format("r"), skiprows=1)
-            satur_sub[i] += np.loadtxt(str(session) + file_name.format("sat"), skiprows=1)
+            tmp_result = np.load(str(session) + file_name)
+            mtr_sub[i] += tmp_result['MTR']
+            mtsat_sub[i] += tmp_result['MTsat']
+            ihmtr_sub[i] += tmp_result['ihMTR']
+            ihmtsat_sub[i] += tmp_result['ihMTsat']
+            nb_voxels_sub[i] += tmp_result['Nb_voxels']
             if i + 3 == args.sub_id:
-                ratio_ses[j] = np.loadtxt(str(session) + file_name.format("r"), skiprows=1)
-                satur_ses[j] = np.loadtxt(str(session) + file_name.format("sat"), skiprows=1)
-        ratio_sub[i] /= 5
-        satur_sub[i] /= 5
+                mtr_ses[j] = tmp_result['MTR']
+                mtsat_ses[j] = tmp_result['MTsat']
+                ihmtr_ses[j] = tmp_result['ihMTR']
+                ihmtsat_ses[j] = tmp_result['ihMTsat']
+                nb_voxels_ses[j] = tmp_result['Nb_voxels']
+        mtr_sub[i] /= 5
+        mtsat_sub[i] /= 5
+        ihmtr_sub[i] /= 5
+        ihmtsat_sub[i] /= 5
+        nb_voxels_sub[i] /= 5
         labels_sub[i] = str(i + 1)
 
-    bins = np.zeros((ratio_sub[:, :, 0].shape[1] + 1))
-    bins[:ratio_sub[:, :, 0].shape[1]] = ratio_sub[0, :, 0]
-    bins[-1] = ratio_sub[0, -1, 1]
-
-    mtr_sub = ratio_sub[:, :, 2]
-    ihmtr_sub = ratio_sub[:, :, 3]
-    nb_voxels_sub = ratio_sub[:, :, 4]
-    mtsat_sub = satur_sub[:, :, 2]
-    ihmtsat_sub = satur_sub[:, :, 3]
-
-    mtr_ses = ratio_ses[:, :, 2]
-    ihmtr_ses = ratio_ses[:, :, 3]
-    nb_voxels_ses = ratio_ses[:, :, 4]
-    mtsat_ses = satur_ses[:, :, 2]
-    ihmtsat_ses = satur_ses[:, :, 3]
+    mid_bins = (tmp_result['Angle_min'] + tmp_result['Angle_max']) / 2.
     
     max_count_sub = np.max(nb_voxels_sub)
     max_count_ses = np.max(nb_voxels_ses)
@@ -93,7 +94,6 @@ def main():
     norm_sub = mpl.colors.Normalize(vmin=0, vmax=max_count_sub)
     norm_ses = mpl.colors.Normalize(vmin=0, vmax=max_count_ses)
     norm = mpl.colors.Normalize(vmin=0, vmax=max_count)
-    mid_bins = (bins[:-1] + bins[1:]) / 2.
     highres_bins = np.arange(0, 90 + 1, 0.5)
 
     plot_init(dims=(8, 10), font_size=10)
@@ -142,6 +142,22 @@ def main():
                             c=nb_voxels_sub[i + 1, is_measures], cmap='Greys', norm=norm_sub,
                             linewidths=1,
                             edgecolors="C" + str(i), marker="o")
+            ax[0, 0].scatter(mid_bins[is_not_measures], mtr_sub[i + 1, is_not_measures],
+                                    c=nb_voxels_sub[i + 1, is_not_measures], cmap='Greys', norm=norm_sub,
+                                    linewidths=1, alpha=0.5,
+                                    edgecolors="C" + str(i), marker="o")
+            ax[0, 1].scatter(mid_bins[is_not_measures], ihmtr_sub[i + 1, is_not_measures],
+                            c=nb_voxels_sub[i + 1, is_not_measures], cmap='Greys', norm=norm_sub,
+                            linewidths=1, alpha=0.5,
+                            edgecolors="C" + str(i), marker="o")
+            ax[1, 0].scatter(mid_bins[is_not_measures], mtsat_sub[i + 1, is_not_measures],
+                            c=nb_voxels_sub[i + 1, is_not_measures], cmap='Greys', norm=norm_sub,
+                            linewidths=1, alpha=0.5,
+                            edgecolors="C" + str(i), marker="o")
+            ax[1, 1].scatter(mid_bins[is_not_measures], ihmtsat_sub[i + 1, is_not_measures],
+                            c=nb_voxels_sub[i + 1, is_not_measures], cmap='Greys', norm=norm_sub,
+                            linewidths=1, alpha=0.5,
+                            edgecolors="C" + str(i), marker="o")
             
     fig.colorbar(colorbar, ax=ax[:2, 1], location='right', label="Voxel count")
 
@@ -166,6 +182,22 @@ def main():
             ax[3, 1].scatter(mid_bins[is_measures], ihmtsat_ses[i, is_measures],
                             c=nb_voxels_ses[i, is_measures], cmap='Greys', norm=norm_ses,
                             label=labels[i], linewidths=1,
+                            edgecolors="C" + str(i), marker="o")
+            ax[2, 0].scatter(mid_bins[is_not_measures], mtr_ses[i, is_not_measures],
+                                    c=nb_voxels_ses[i, is_not_measures], cmap='Greys', norm=norm_ses,
+                                    linewidths=1, alpha=0.5,
+                                    edgecolors="C" + str(i), marker="o")
+            ax[2, 1].scatter(mid_bins[is_not_measures], ihmtr_ses[i, is_not_measures],
+                            c=nb_voxels_ses[i, is_not_measures], cmap='Greys', norm=norm_ses,
+                            linewidths=1, alpha=0.5,
+                            edgecolors="C" + str(i), marker="o")
+            ax[3, 0].scatter(mid_bins[is_not_measures], mtsat_ses[i, is_not_measures],
+                            c=nb_voxels_ses[i, is_not_measures], cmap='Greys', norm=norm_ses,
+                            linewidths=1, alpha=0.5,
+                            edgecolors="C" + str(i), marker="o")
+            ax[3, 1].scatter(mid_bins[is_not_measures], ihmtsat_ses[i, is_not_measures],
+                            c=nb_voxels_ses[i, is_not_measures], cmap='Greys', norm=norm_ses,
+                            linewidths=1, alpha=0.5,
                             edgecolors="C" + str(i), marker="o")
         else:
             colorbar = ax[2, 0].scatter(mid_bins[is_measures], mtr_ses[i, is_measures],
@@ -195,12 +227,12 @@ def main():
 
     is_not_nan = nb_voxels_ses[ses_id] > 0
 
-    weights = np.sqrt(nb_voxels_ses[ses_id])
+    weights = np.sqrt(nb_voxels_ses[ses_id]) / np.max(nb_voxels_ses[ses_id])
 
-    mtr_fit = splrep(mid_bins[is_not_nan], mtr_ses[ses_id, is_not_nan], s=0.5)
-    mtsat_fit = splrep(mid_bins[is_not_nan], mtsat_ses[ses_id, is_not_nan], s=0.5)
-    ihmtr_fit = splrep(mid_bins[is_not_nan], ihmtr_ses[ses_id, is_not_nan], s=0.5)
-    ihmtsat_fit = splrep(mid_bins[is_not_nan], ihmtsat_ses[ses_id, is_not_nan], s=0.005)
+    mtr_fit = splrep(mid_bins[is_not_nan], mtr_ses[ses_id, is_not_nan], w=weights, s=0.0002)
+    mtsat_fit = splrep(mid_bins[is_not_nan], mtsat_ses[ses_id, is_not_nan], w=weights, s=0.001)
+    ihmtr_fit = splrep(mid_bins[is_not_nan], ihmtr_ses[ses_id, is_not_nan], w=weights, s=0.0001)
+    ihmtsat_fit = splrep(mid_bins[is_not_nan], ihmtsat_ses[ses_id, is_not_nan], w=weights, s=0.000001)
 
     if labels is not None:
         colorbar = ax[4, 0].scatter(mid_bins[is_measures], mtr_ses[ses_id, is_measures],
