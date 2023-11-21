@@ -51,8 +51,7 @@ def analyse_delta_m_max(bins, means_diag, sf_delta_m_max, nb_voxels,
 
 def compute_three_fibers_means(peaks, peak_values, wm_mask, affine, nufo,
                                measures, bin_width=30, mask=None,
-                               frac_thrs=np.array([0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]),
-                               min_nb_voxels=5):
+                               frac_thrs=np.array([0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])):
     peaks_fraction = compute_peaks_fraction(peak_values)
 
     # Find the direction of the B0 field
@@ -99,7 +98,7 @@ def compute_three_fibers_means(peaks, peak_values, wm_mask, affine, nufo,
 
             mask = mask_f1 & mask_f2 & mask_f3 & wm_mask_bool & fraction_mask_bool
             nb_voxels[idx, i] = np.sum(mask)
-            if np.sum(mask) < min_nb_voxels:
+            if np.sum(mask) < 1:
                 measure_means[idx, i, :] = None
             else:
                 measure_means[idx, i] = np.mean(measures[mask], axis=0)
@@ -111,8 +110,7 @@ def compute_three_fibers_means(peaks, peak_values, wm_mask, affine, nufo,
 
 def compute_two_fibers_means(peaks, peak_values, wm_mask, affine, nufo,
                              measures, bin_width=10, mask=None,
-                             frac_thrs=np.array([0.5, 0.6, 0.7, 0.8, 0.9]),
-                             min_nb_voxels=5):
+                             frac_thrs=np.array([0.5, 0.6, 0.7, 0.8, 0.9])):
     peaks_fraction = compute_peaks_fraction(peak_values)
 
     # Find the direction of the B0 field
@@ -151,7 +149,7 @@ def compute_two_fibers_means(peaks, peak_values, wm_mask, affine, nufo,
                 mask_f2 = angle_mask
                 mask = mask_f1 & mask_f2 & wm_mask_bool & fraction_mask_bool
                 nb_voxels[idx, i, j] = np.sum(mask)
-                if np.sum(mask) < min_nb_voxels:
+                if np.sum(mask) < 1:
                     measure_means[idx, i, j, :] = None
                 else:
                     measure_means[idx, i, j] = np.mean(measures[mask], axis=0)

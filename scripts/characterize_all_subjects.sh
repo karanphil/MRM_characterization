@@ -1,0 +1,12 @@
+wdir="/home/pkaran/Samsung/data/MT_Diffusion/myelo_inferno";
+#wdir="/home/local/USHERBROOKE/karp2601/Samsung/data/MT_Diffusion/myelo_inferno";
+source_dir="source";
+#source_dir="Research/source";
+cd $wdir;
+bin_width=1;
+poly_order=8;
+for sub in DTI_metrics/sub*;
+    do echo $sub;
+    mkdir -p "corrected_measures_new_nufo/${sub}/new_characterization";
+    python ~/${source_dir}/MRM_characterization/scripts/scil_characterize_orientation_dependence.py FODF_metrics/${sub}/new_at/peaks.nii.gz  FODF_metrics/${sub}/new_at/peak_values.nii.gz DTI_metrics/${sub}/${sub}__dti_fa.nii.gz FODF_metrics/${sub}/new_at/nufo.nii.gz wm_mask/${sub}/${sub}__wm_mask.nii.gz corrected_measures_new_nufo/${sub}/new_characterization --measures ihMT/${sub}/${sub}__MTR_warped.nii.gz ihMT/${sub}/${sub}__ihMTR_warped.nii.gz ihMT/${sub}/${sub}__MTsat_warped.nii.gz ihMT/${sub}/${sub}__ihMTsat_warped.nii.gz --in_e1 DTI_metrics/${sub}/${sub}__dti_evecs_v1.nii.gz --measures_names MTR ihMTR MTsat ihMTsat --save_npz_files --bin_width_1f $bin_width --poly_order $poly_order --use_weighted_polyfit --scale_poly_order --min_nb_voxels 1;
+done;
