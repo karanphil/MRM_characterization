@@ -259,7 +259,7 @@ def main():
     bins, measure_means, nb_voxels, labels =\
         compute_two_fibers_means(peaks, peak_values,
                                         wm_mask, affine,
-                                        nufo, measures, mask=roi,
+                                        nufo, measures, roi=roi,
                                         bin_width=args.bin_width_2f)
     
     measure_means_diag = np.diagonal(measure_means, axis1=1, axis2=2)
@@ -315,7 +315,7 @@ def main():
         bins, measure_means, nb_voxels, labels =\
             compute_three_fibers_means(peaks, peak_values, wm_mask, affine,
                                     nufo, measures, bin_width=args.bin_width_3f,
-                                    mask=roi)
+                                    roi=roi)
         
         if args.save_npz_files:
             print("Saving results as npz files.")
