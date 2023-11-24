@@ -78,8 +78,13 @@ def main():
     mid_bins = (results[0]['Angle_min'] + results[0]['Angle_max']) / 2.
     highres_bins = np.arange(0, 90 + 1, 0.5)
 
+    # out_path = out_folder / str("all_bundles_original_1f_LABELS.png")
     out_path = out_folder / str("all_bundles_original_1f.png")
-    plot_init(dims=(15, 10), font_size=10)
+    plot_init(dims=(10, 10), font_size=10)
+    plt.rcParams['ytick.labelsize'] = 8
+    plt.rcParams['xtick.labelsize'] = 8
+    plt.rcParams['lines.linewidth'] = 0.5
+    plt.rcParams['lines.markersize'] = 3
     fig, ax = plt.subplots(nb_rows, 4, layout='constrained')
     for i in range(nb_bundles):
         col = i % 2
@@ -113,6 +118,7 @@ def main():
                                  cmap='Greys', norm=norm, alpha=0.5,
                                  edgecolors="C2", linewidths=1)
 
+            # !!!!!!!!!!!!!!! Ajust the s values!!!!!!!!!!!!!!!!!!!
             is_not_nan = result['Nb_voxels'] > 0
             weights = np.sqrt(result['Nb_voxels'][is_not_nan]) / np.max(result['Nb_voxels'][is_not_nan])
             mtr_fit = splrep(mid_bins[is_not_nan], result['MTR'][is_not_nan], w=weights, s=0.0005)
@@ -261,24 +267,24 @@ def main():
 
             ax[row, col + 1].set_zorder(1)
             ax[row, col + 1].patch.set_visible(False)
-        if col == 0:
-            ax[row, col + 1].legend(handles=[colorbar], labels=[bundles_names[i]],
-                                loc='center left', bbox_to_anchor=(1.4, 0.5),
-                                markerscale=0, handletextpad=-2.0, handlelength=2)
-        if col == 2:
-            ax[row, col ].legend(handles=[colorbar], labels=[bundles_names[i]],
-                                loc='center left', bbox_to_anchor=(-0.8, 0.5),
-                                markerscale=0, handletextpad=-2.0, handlelength=2)
+        # if col == 0:
+        #     ax[row, col + 1].legend(handles=[colorbar], labels=[bundles_names[i]],
+        #                         loc='center left', bbox_to_anchor=(1.2, 0.5),
+        #                         markerscale=0, handletextpad=-2.0, handlelength=2)
+        # if col == 2:
+        #     ax[row, col ].legend(handles=[colorbar], labels=[bundles_names[i]],
+        #                         loc='center left', bbox_to_anchor=(-0.7, 0.5),
+        #                         markerscale=0, handletextpad=-2.0, handlelength=2)
         if row != nb_rows - 1:
             ax[row, col].get_xaxis().set_ticks([])
             ax[row, col + 1].get_xaxis().set_ticks([])
-        if row == (nb_rows - 1) / 2 and col == 0:
-            ax[row, col].set_ylabel('MTR', color="C0")
-            ax[row, col + 1].set_ylabel('ihMTR', color="C2")
-            ax[row, col].yaxis.set_label_coords(-0.2, 0.5)
-        if row == (nb_rows - 1) / 2 and col == 0:
-            axt.set_ylabel('MTsat', color="C1")
-            axt2.set_ylabel('ihMTsat', color="C4")
+        # if row == (nb_rows - 1) / 2 and col == 0:
+        #     ax[row, col].set_ylabel('MTR', color="C0")
+        #     ax[row, col + 1].set_ylabel('ihMTR', color="C2")
+        #     ax[row, col].yaxis.set_label_coords(-0.2, 0.5)
+        # if row == (nb_rows - 1) / 2 and col == 0:
+        #     axt.set_ylabel('MTsat', color="C1")
+        #     axt2.set_ylabel('ihMTsat', color="C4")
     fig.colorbar(colorbar, ax=ax[:, 3], location='right',
                  label="Voxel count", aspect=100)
     ax[nb_rows - 1, 0].set_xlabel(r'$\theta_a$')
@@ -296,8 +302,8 @@ def main():
     # if nb_bundles % 2 != 0:
     #     ax[nb_rows - 1, 1].set_yticks([])
     fig.get_layout_engine().set(h_pad=0, hspace=0)
-    plt.show()
-    # plt.savefig(out_path, dpi=300, bbox_inches='tight')
+    # plt.show()
+    plt.savefig(out_path, dpi=500, bbox_inches='tight')
     plt.close()
 
 
