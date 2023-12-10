@@ -56,7 +56,7 @@ def main():
     for i, result in enumerate(args.results[0]):
         print("Loading: ", result)
         results.append(np.load(result))
-        extracted_bundles.append(str(Path(result).parent))
+        extracted_bundles.append(str(Path(result).parent.name))
         curr_max_count = np.max(results[i]['Nb_voxels'])
         if curr_max_count > max_count:
             max_count = curr_max_count
