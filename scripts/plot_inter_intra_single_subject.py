@@ -18,9 +18,9 @@ def _build_arg_parser():
     
     p.add_argument('--in_results', nargs='+',
                    help='List of all results directories.')
-    p.add_argument('--sub_id', type=int,
+    p.add_argument('--sub_id', type=int, default=26,
                    help='ID of the selected subject.')
-    p.add_argument('--ses_id', type=int,
+    p.add_argument('--ses_id', type=int, default=3,
                    help='ID of the selected session.')
 
     g = p.add_argument_group(title='Characterization parameters')
@@ -65,6 +65,7 @@ def main():
     for i, subject in enumerate(subjects):
         print(subject)
         sessions = list(Path('.').glob(subject + "*"))
+        subject_id = int(subject.split('-')[1])
         for j, session in enumerate(sessions[:5]):
             print(session)
             tmp_result = np.load(str(session) + file_name)
@@ -73,7 +74,7 @@ def main():
             ihmtr_sub[i] += tmp_result['ihMTR']
             ihmtsat_sub[i] += tmp_result['ihMTsat']
             nb_voxels_sub[i] += tmp_result['Nb_voxels']
-            if i + 3 == args.sub_id:
+            if args.sub_id == subject_id:
                 mtr_ses[j] = tmp_result['MTR']
                 mtsat_ses[j] = tmp_result['MTsat']
                 ihmtr_ses[j] = tmp_result['ihMTR']
@@ -106,9 +107,25 @@ def main():
 
     labels = None
 
+    min_mtr = 10000
+    max_mtr = 0
+    min_mtsat = 10000
+    max_mtsat = 0
+    min_ihmtr = 10000
+    max_ihmtr = 0
+    min_ihmtsat = 10000
+    max_ihmtsat = 0
     for i in range(mtr_sub.shape[0] - 1):
         is_measures = nb_voxels_sub[i + 1] >= min_nb_voxels
         is_not_measures = np.invert(is_measures)
+        min_mtr = np.min((np.nanmin(mtr_sub[i + 1, is_measures]), min_mtr))
+        max_mtr = np.max((np.nanmax(mtr_sub[i + 1, is_measures]), max_mtr))
+        min_mtsat = np.min((np.nanmin(mtsat_sub[i + 1, is_measures]), min_mtsat))
+        max_mtsat = np.max((np.nanmax(mtsat_sub[i + 1, is_measures]), max_mtsat))
+        min_ihmtr = np.min((np.nanmin(ihmtr_sub[i + 1, is_measures]), min_ihmtr))
+        max_ihmtr = np.max((np.nanmax(ihmtr_sub[i + 1, is_measures]), max_ihmtr))
+        min_ihmtsat = np.min((np.nanmin(ihmtsat_sub[i + 1, is_measures]), min_ihmtsat))
+        max_ihmtsat = np.max((np.nanmax(ihmtsat_sub[i + 1, is_measures]), max_ihmtsat))
         if labels is not None:
             colorbar = ax[0, 0].scatter(mid_bins[is_measures], mtr_sub[i + 1, is_measures],
                                     c=nb_voxels_sub[i + 1, is_measures], cmap='Greys', norm=norm_sub,
@@ -159,14 +176,34 @@ def main():
                             c=nb_voxels_sub[i + 1, is_not_measures], cmap='Greys', norm=norm_sub,
                             linewidths=1, alpha=0.5,
                             edgecolors="C" + str(i), marker="o")
-            
+
+    ax[0, 0].set_ylim(0.975 * min_mtr, 1.025 * max_mtr)
+    ax[1, 0].set_ylim(0.975 * min_mtsat, 1.025 * max_mtsat)
+    ax[0, 1].set_ylim(0.975 * min_ihmtr, 1.025 * max_ihmtr)
+    ax[1, 1].set_ylim(0.975 * min_ihmtsat, 1.025 * max_ihmtsat)
     fig.colorbar(colorbar, ax=ax[:2, 1], location='right', label="Voxel count")
 
     labels = np.array(["Session 1", "Session 2", "Session 3", "Session 4", "Session 5"])
 
+    min_mtr = 10000
+    max_mtr = 0
+    min_mtsat = 10000
+    max_mtsat = 0
+    min_ihmtr = 10000
+    max_ihmtr = 0
+    min_ihmtsat = 10000
+    max_ihmtsat = 0
     for i in range(mtr_ses.shape[0]):
         is_measures = nb_voxels_ses[i] >= min_nb_voxels
         is_not_measures = np.invert(is_measures)
+        min_mtr = np.min((np.nanmin(mtr_ses[i, is_measures]), min_mtr))
+        max_mtr = np.max((np.nanmax(mtr_ses[i, is_measures]), max_mtr))
+        min_mtsat = np.min((np.nanmin(mtsat_ses[i, is_measures]), min_mtsat))
+        max_mtsat = np.max((np.nanmax(mtsat_ses[i, is_measures]), max_mtsat))
+        min_ihmtr = np.min((np.nanmin(ihmtr_ses[i, is_measures]), min_ihmtr))
+        max_ihmtr = np.max((np.nanmax(ihmtr_ses[i, is_measures]), max_ihmtr))
+        min_ihmtsat = np.min((np.nanmin(ihmtsat_ses[i, is_measures]), min_ihmtsat))
+        max_ihmtsat = np.max((np.nanmax(ihmtsat_ses[i, is_measures]), max_ihmtsat))
         if labels is not None:
             colorbar = ax[2, 0].scatter(mid_bins[is_measures], mtr_ses[i, is_measures],
                                     c=nb_voxels_ses[i, is_measures], cmap='Greys', norm=norm_ses,
@@ -217,8 +254,13 @@ def main():
                             c=nb_voxels_ses[i, is_measures], cmap='Greys', norm=norm_ses,
                             linewidths=1,
                             edgecolors="C" + str(i), marker="o")
-            
+
+    ax[2, 0].set_ylim(0.975 * min_mtr, 1.025 * max_mtr)
+    ax[3, 0].set_ylim(0.975 * min_mtsat, 1.025 * max_mtsat)
+    ax[2, 1].set_ylim(0.975 * min_ihmtr, 1.025 * max_ihmtr)
+    ax[3, 1].set_ylim(0.975 * min_ihmtsat, 1.025 * max_ihmtsat)
     fig.colorbar(colorbar, ax=ax[2:4, 1], location='right', label="Voxel count")
+
     if labels is not None:
         ax[2, 1].legend(loc=1, prop={'size': 8})
 
@@ -289,7 +331,11 @@ def main():
                         c=nb_voxels_ses[ses_id, is_not_measures], cmap='Greys', norm=norm,
                         linewidths=1, alpha=0.5,
                         edgecolors="C0", marker="o")
-        
+
+    ax[4, 0].set_ylim(0.975 * np.nanmin(mtr_ses[ses_id, is_measures]), 1.025 * np.nanmax(mtr_ses[ses_id, is_measures]))
+    ax[5, 0].set_ylim(0.975 * np.nanmin(mtsat_ses[ses_id, is_measures]), 1.025 * np.nanmax(mtsat_ses[ses_id, is_measures]))
+    ax[4, 1].set_ylim(0.975 * np.nanmin(ihmtr_ses[ses_id, is_measures]), 1.025 * np.nanmax(ihmtr_ses[ses_id, is_measures]))
+    ax[5, 1].set_ylim(0.975 * np.nanmin(ihmtsat_ses[ses_id, is_measures]), 1.025 * np.nanmax(ihmtsat_ses[ses_id, is_measures]))
     fig.colorbar(colorbar, ax=ax[4:6, 1], location='right', label="Voxel count")
 
     ax[5, 0].set_xlabel(r'$\theta_a$')
