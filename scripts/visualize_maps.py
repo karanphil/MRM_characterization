@@ -28,8 +28,8 @@ def _build_arg_parser():
     p.add_argument('--wm_mask', default=[],
                    help='WM mask image.')
     
-    p.add_argument('--slices', nargs=3, default=[],
-                   action='append', required=True,
+    p.add_argument('--slices', nargs=3, default=[77, 90, 59],
+                   action='append',
                    help='List indices for where to slice the images.')
     
     p.add_argument('--combine_colorbar', action='store_false',
@@ -56,9 +56,9 @@ def main():
     else:
         mask = np.ones((data_shape))
 
-    x_index = int(args.slices[0][0]) # 53, 54 or 55 (55)
-    y_index = int(args.slices[0][1]) # 92, 93, or 94 (93)
-    z_index = int(args.slices[0][2]) # 53 (53)
+    x_index = int(args.slices[0]) # 53, 54 or 55 (55)
+    y_index = int(args.slices[1]) # 92, 93, or 94 (93)
+    z_index = int(args.slices[2]) # 53 (53)
 
     vmax = np.array([90, 90, 90, 1, 1])
 

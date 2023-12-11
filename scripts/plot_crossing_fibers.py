@@ -125,7 +125,9 @@ def main():
 
     labels = np.array(["[0.5, 0.6[", "[0.6, 0.7[", "[0.7, 0.8[", "[0.8, 0.9["])
 
-    plot_init(dims=(12, 5), font_size=10)
+    plot_init(dims=(10, 5), font_size=10)
+    plt.rcParams['xtick.labelsize'] = 10
+    plt.rcParams['ytick.labelsize'] = 10
     plt.rcParams['lines.linewidth'] = 0.5
 
     fig, ax = plt.subplots(2, 2,
@@ -138,35 +140,35 @@ def main():
         colorbar = ax[0, 0].scatter(mid_bins[is_measures], mtr_diag[i, is_measures],
                                     c=nb_voxels_diag[i, is_measures], cmap='Greys', norm=norm,
                                     label=labels[i], linewidths=1,
-                                    edgecolors="C" + str(i), marker="o")
+                                    edgecolors=cm.naviaS(i+2), marker="o")
         ax[0, 1].scatter(mid_bins[is_measures], ihmtr_diag[i, is_measures],
                                     c=nb_voxels_diag[i, is_measures], cmap='Greys', norm=norm,
                                     label=labels[i], linewidths=1,
-                                    edgecolors="C" + str(i), marker="o")
+                                    edgecolors=cm.naviaS(i+2), marker="o")
         ax[1, 0].scatter(mid_bins[is_measures], mtsat_diag[i, is_measures],
                                     c=nb_voxels_diag[i, is_measures], cmap='Greys', norm=norm,
                                     label=labels[i], linewidths=1,
-                                    edgecolors="C" + str(i), marker="o")
+                                    edgecolors=cm.naviaS(i+2), marker="o")
         ax[1, 1].scatter(mid_bins[is_measures], ihmtsat_diag[i, is_measures],
                                     c=nb_voxels_diag[i, is_measures], cmap='Greys', norm=norm,
                                     label=labels[i], linewidths=1,
-                                    edgecolors="C" + str(i), marker="o")
+                                    edgecolors=cm.naviaS(i+2), marker="o")
         ax[0, 0].scatter(mid_bins[is_not_measures], mtr_diag[i, is_not_measures],
                                     c=nb_voxels_diag[i, is_not_measures], cmap='Greys', norm=norm,
                                     linewidths=1, alpha=0.5,
-                                    edgecolors="C" + str(i), marker="o")
+                                    edgecolors=cm.naviaS(i+2), marker="o")
         ax[0, 1].scatter(mid_bins[is_not_measures], ihmtr_diag[i, is_not_measures],
                                     c=nb_voxels_diag[i, is_not_measures], cmap='Greys', norm=norm,
                                     linewidths=1, alpha=0.5,
-                                    edgecolors="C" + str(i), marker="o")
+                                    edgecolors=cm.naviaS(i+2), marker="o")
         ax[1, 0].scatter(mid_bins[is_not_measures], mtsat_diag[i, is_not_measures],
                                     c=nb_voxels_diag[i, is_not_measures], cmap='Greys', norm=norm,
                                     linewidths=1, alpha=0.5,
-                                    edgecolors="C" + str(i), marker="o")
+                                    edgecolors=cm.naviaS(i+2), marker="o")
         ax[1, 1].scatter(mid_bins[is_not_measures], ihmtsat_diag[i, is_not_measures],
                                     c=nb_voxels_diag[i, is_not_measures], cmap='Greys', norm=norm,
                                     linewidths=1, alpha=0.5,
-                                    edgecolors="C" + str(i), marker="o")
+                                    edgecolors=cm.naviaS(i+2), marker="o")
         
         weights = np.sqrt(nb_voxels_diag[i, is_not_nan]) / np.max(nb_voxels_diag[i, is_not_nan])
 
@@ -175,29 +177,34 @@ def main():
         ihmtr_fit = splrep(mid_bins[is_not_nan], ihmtr_diag[i, is_not_nan], w=weights, s=0.0001)
         ihmtsat_fit = splrep(mid_bins[is_not_nan], ihmtsat_diag[i, is_not_nan], w=weights, s=0.000001)
 
-        ax[0, 0].plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color="C" + str(i))
-        ax[0, 1].plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color="C" + str(i))
-        ax[1, 0].plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color="C" + str(i))
-        ax[1, 1].plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color="C" + str(i))
+        ax[0, 0].plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color=cm.naviaS(i+2))
+        ax[0, 1].plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color=cm.naviaS(i+2))
+        ax[1, 0].plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color=cm.naviaS(i+2))
+        ax[1, 1].plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color=cm.naviaS(i+2))
 
-    ax[0, 0].set_ylim(0.985 * np.nanmin(mtr_diag), 1.015 * np.nanmax(mtr_diag))
-    ax[0, 1].set_ylim(0.985 * np.nanmin(ihmtr_diag), 1.015 * np.nanmax(ihmtr_diag))
-    ax[1, 0].set_ylim(0.985 * np.nanmin(mtsat_diag), 1.015 * np.nanmax(mtsat_diag))
-    ax[1, 1].set_ylim(0.985 * np.nanmin(ihmtsat_diag), 1.015 * np.nanmax(ihmtsat_diag))
+    ax[0, 0].set_ylim(0.975 * np.nanmin(mtr_diag), 1.025 * np.nanmax(mtr_diag))
+    ax[0, 1].set_ylim(0.975 * np.nanmin(ihmtr_diag), 1.025 * np.nanmax(ihmtr_diag))
+    ax[1, 0].set_ylim(0.975 * np.nanmin(mtsat_diag), 1.025 * np.nanmax(mtsat_diag))
+    ax[1, 1].set_ylim(0.975 * np.nanmin(ihmtsat_diag), 1.025 * np.nanmax(ihmtsat_diag))
 
     ax[0, 0].set_ylabel("MTR")
     ax[0, 1].set_ylabel("ihMTR")
     ax[1, 0].set_ylabel("MTsat")
     ax[1, 1].set_ylabel("ihMTsat")
 
+    ax[0, 0].set_xticks([0, 15, 30, 45, 60, 75, 90])
+    ax[0, 1].set_xticks([0, 15, 30, 45, 60, 75, 90])
+    ax[1, 0].set_xticks([0, 15, 30, 45, 60, 75, 90])
+    ax[1, 1].set_xticks([0, 15, 30, 45, 60, 75, 90])
+    ax[1, 0].set_xlabel(r'$\theta_a$')
+    ax[1, 1].set_xlabel(r'$\theta_a$')
     for i in range(ax.shape[0]):
         for j in range(ax.shape[1]):
-            ax[i, j].set_xlabel(r'$\theta_a$')
             ax[i, j].set_xlim(0, 90)
     ax[0, 1].legend(loc=1)
     ax[0, 1].get_legend().set_title(r"Peak$_1$ fraction")
 
-    if args.delta_max is not None:
+    if args.delta_max:
         sf_delta_m_max = 2.52904729
         slope, origin, delta_max, frac_thrs_mid, min_bins, max_bins =\
             analyse_delta_m_max(bins, mtr_diag.reshape((mtr_diag.shape) + (1,)),
@@ -247,7 +254,7 @@ def main():
 
         labels = np.array(["[0.3, 0.4[", "[0.4, 0.5[", "[0.5, 0.6[", "[0.6, 0.7[", "[0.7, 0.8[", "[0.8, 0.9["])
 
-        plot_init(dims=(12, 5), font_size=10)
+        plot_init(dims=(10, 5), font_size=10)
 
         fig, ax = plt.subplots(2, 2,
                             gridspec_kw={"width_ratios":[1, 1]},
@@ -259,49 +266,55 @@ def main():
             colorbar = ax[0, 0].scatter(mid_bins_3f[is_measures], mtr_3f[i, is_measures],
                                         c=nb_voxels_3f[i, is_measures], cmap='Greys', norm=norm,
                                         label=labels[i], linewidths=1,
-                                        edgecolors="C" + str(i), marker="o")
+                                        edgecolors=cm.naviaS(i+10), marker="o")
             ax[0, 1].scatter(mid_bins_3f[is_measures], ihmtr_3f[i, is_measures],
                                         c=nb_voxels_3f[i, is_measures], cmap='Greys', norm=norm,
                                         label=labels[i], linewidths=1,
-                                        edgecolors="C" + str(i), marker="o")
+                                        edgecolors=cm.naviaS(i+10), marker="o")
             ax[1, 0].scatter(mid_bins_3f[is_measures], mtsat_3f[i, is_measures],
                                         c=nb_voxels_3f[i, is_measures], cmap='Greys', norm=norm,
                                         label=labels[i], linewidths=1,
-                                        edgecolors="C" + str(i), marker="o")
+                                        edgecolors=cm.naviaS(i+10), marker="o")
             ax[1, 1].scatter(mid_bins_3f[is_measures], ihmtsat_3f[i, is_measures],
                                         c=nb_voxels_3f[i, is_measures], cmap='Greys', norm=norm,
                                         label=labels[i], linewidths=1,
-                                        edgecolors="C" + str(i), marker="o")
+                                        edgecolors=cm.naviaS(i+10), marker="o")
             ax[0, 0].scatter(mid_bins_3f[is_not_measures], mtr_3f[i, is_not_measures],
                                         c=nb_voxels_3f[i, is_not_measures], cmap='Greys', norm=norm,
                                         linewidths=1, alpha=0.5,
-                                        edgecolors="C" + str(i), marker="o")
+                                        edgecolors=cm.naviaS(i+10), marker="o")
             ax[0, 1].scatter(mid_bins_3f[is_not_measures], ihmtr_3f[i, is_not_measures],
                                         c=nb_voxels_3f[i, is_not_measures], cmap='Greys', norm=norm,
                                         linewidths=1, alpha=0.5,
-                                        edgecolors="C" + str(i), marker="o")
+                                        edgecolors=cm.naviaS(i+10), marker="o")
             ax[1, 0].scatter(mid_bins_3f[is_not_measures], mtsat_3f[i, is_not_measures],
                                         c=nb_voxels_3f[i, is_not_measures], cmap='Greys', norm=norm,
                                         linewidths=1, alpha=0.5,
-                                        edgecolors="C" + str(i), marker="o")
+                                        edgecolors=cm.naviaS(i+10), marker="o")
             ax[1, 1].scatter(mid_bins_3f[is_not_measures], ihmtsat_3f[i, is_not_measures],
                                         c=nb_voxels_3f[i, is_not_measures], cmap='Greys', norm=norm,
                                         linewidths=1, alpha=0.5,
-                                        edgecolors="C" + str(i), marker="o")
+                                        edgecolors=cm.naviaS(i+10), marker="o")
 
-        ax[0, 0].set_ylim(0.985 * np.nanmin(mtr_3f), 1.015 * np.nanmax(mtr_3f))
-        ax[0, 1].set_ylim(0.985 * np.nanmin(ihmtr_3f), 1.015 * np.nanmax(ihmtr_3f))
-        ax[1, 0].set_ylim(0.985 * np.nanmin(mtsat_3f), 1.015 * np.nanmax(mtsat_3f))
-        ax[1, 1].set_ylim(0.985 * np.nanmin(ihmtsat_3f), 1.015 * np.nanmax(ihmtsat_3f))
+        ax[0, 0].set_ylim(0.975 * np.nanmin(mtr_3f), 1.025 * np.nanmax(mtr_3f))
+        ax[0, 1].set_ylim(0.975 * np.nanmin(ihmtr_3f), 1.025 * np.nanmax(ihmtr_3f))
+        ax[1, 0].set_ylim(0.975 * np.nanmin(mtsat_3f), 1.025 * np.nanmax(mtsat_3f))
+        ax[1, 1].set_ylim(0.975 * np.nanmin(ihmtsat_3f), 1.025 * np.nanmax(ihmtsat_3f))
 
         ax[0, 0].set_ylabel("MTR")
         ax[0, 1].set_ylabel("ihMTR")
         ax[1, 0].set_ylabel("MTsat")
         ax[1, 1].set_ylabel("ihMTsat")
 
+        ax[0, 0].set_xticks([0, 15, 30, 45, 60, 75, 90])
+        ax[0, 1].set_xticks([0, 15, 30, 45, 60, 75, 90])
+        ax[1, 0].set_xticks([0, 15, 30, 45, 60, 75, 90])
+        ax[1, 1].set_xticks([0, 15, 30, 45, 60, 75, 90])
+        ax[1, 0].set_xlabel(r'$\theta_a$')
+        ax[1, 1].set_xlabel(r'$\theta_a$')
+
         for i in range(ax.shape[0]):
             for j in range(ax.shape[1]):
-                ax[i, j].set_xlabel(r'$\theta_a$')
                 ax[i, j].set_xlim(0, 90)
         ax[0, 1].legend(loc=2)
         ax[0, 1].get_legend().set_title(r"Peak$_1$ fraction")
