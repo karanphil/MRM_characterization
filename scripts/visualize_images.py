@@ -171,8 +171,8 @@ def main():
     # slider.on_changed(update)
     fig.get_layout_engine().set(h_pad=0, hspace=0)
     # fig.tight_layout()
-    # plt.show()
-    plt.savefig(args.out_image, dpi=300, transparent=True)
+    plt.show()
+    # plt.savefig(args.out_image, dpi=300, transparent=True)
 
 
 

@@ -97,7 +97,7 @@ def main():
 
     # out_path = out_folder / str("all_bundles_original_1f_LABELS.png")
     # out_path = out_folder / str("all_bundles_original_1f.png")
-    out_path = out_folder / str("all_bundles_original_1f_TEST.png")
+    out_path = out_folder / str("all_bundles_original_1f_TOTO.png")
     plot_init(dims=(15, 10), font_size=10)
     plt.rcParams['legend.fontsize'] = 8
     plt.rcParams['ytick.labelsize'] = 8
@@ -497,8 +497,8 @@ def main():
     # if nb_bundles % 2 != 0:
     #     ax[nb_rows - 1, 1].set_yticks([])
     fig.get_layout_engine().set(h_pad=0, hspace=0)
-    plt.show()
-    # plt.savefig(out_path, dpi=500, bbox_inches='tight')
+    # plt.show()
+    plt.savefig(out_path, dpi=500, bbox_inches='tight')
     plt.close()
 
 
