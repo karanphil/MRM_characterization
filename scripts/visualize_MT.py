@@ -21,7 +21,7 @@ def _build_arg_parser():
                    action='append', required=True,
                    help='List of images to visualize.')
     
-    p.add_argument('--slices', nargs=3, default=[50, 60, 30],
+    p.add_argument('--slices', nargs=3, default=[55, 55, 35],
                    action='append',
                    help='List indices for where to slice the images.')
 
@@ -49,7 +49,7 @@ def main():
     y_index = int(args.slices[1]) # 91, 92, 93 (93)
     z_index = int(args.slices[2]) # 59
 
-    vmax = np.array([4.5, 4.5, 4.5, 4.5])
+    vmax = np.array([5, 5, 5, 5])
     vmin = np.array([0, 0, 0, 0])
 
     plot_init(dims=(10, 10), font_size=20) # (10, 15)
