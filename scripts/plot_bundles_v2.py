@@ -1,4 +1,5 @@
 import argparse
+from cmcrameri import cm
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -78,6 +79,50 @@ def main():
     mid_bins = (results[0]['Angle_min'] + results[0]['Angle_max']) / 2.
     highres_bins = np.arange(0, 90 + 1, 0.5)
 
+    s_mtr = np.ones(34) * 0.0005
+    s_mtr[4] = 0.0001
+    s_mtr[9] = 0.00001
+    s_mtr[11] = 0.001
+    s_mtr[12] = 0.0001
+    s_mtr[16] = 0.1
+    s_mtr[17] = 0.1
+    s_mtr[24] = 0.005
+    s_mtr[25] = 0.01
+    s_mtr[26] = 0.01
+
+    s_mtsat = np.ones(34) * 0.0005
+    s_mtsat[1] = 0.00001
+    s_mtsat[4] = 0.000001
+    s_mtsat[16] = 0.1
+    s_mtsat[17] = 0.1
+    s_mtsat[25] = 0.00005
+    s_mtsat[26] = 0.00005
+    s_mtsat[27] = 0.00005
+    s_mtsat[28] = 0.00005
+    s_mtsat[29] = 0.00005
+
+    s_ihmtr = np.ones(34) * 0.0005
+    s_ihmtr[1] = 0.0001
+    s_ihmtr[2] = 0.00005
+    s_ihmtr[4] = 0.00005
+    s_ihmtr[9] = 0.00001
+    s_ihmtr[11] = 0.001
+    s_ihmtr[16] = 0.001
+    s_ihmtr[17] = 0.1
+    s_ihmtr[24] = 0.001
+    s_ihmtr[32] = 0.00005
+
+    s_ihmtsat = np.ones(34) * 0.0005
+    s_ihmtsat[1] = 0.000005
+    s_ihmtsat[4] = 0.000001
+    s_ihmtsat[5] = 0.00001
+    s_ihmtsat[9] = 0.0000001
+    s_ihmtsat[16] = 0.01
+    s_ihmtsat[17] = 0.01
+    s_ihmtsat[24] = 0.00005
+    s_ihmtsat[25] = 0.00001
+    s_ihmtsat[32] = 0.00001
+
     # out_path = out_folder / str("all_bundles_original_1f_LABELS.png")
     # out_path = out_folder / str("all_bundles_original_1f.png")
     out_path = out_folder / str("all_bundles_original_1f_TEST.png")
@@ -104,54 +149,54 @@ def main():
                                             result['MTR'][is_measures],
                                             c=result['Nb_voxels'][is_measures],
                                             cmap='Greys', norm=norm,
-                                            edgecolors="C0", linewidths=1)
+                                            edgecolors=cm.naviaS(2), linewidths=1)
             ax[row, col].scatter(mid_bins[is_not_measures],
                                  result['MTR'][is_not_measures],
                                  c=result['Nb_voxels'][is_not_measures],
                                  cmap='Greys', norm=norm, alpha=0.5,
-                                 edgecolors="C0", linewidths=1)
+                                 edgecolors=cm.naviaS(2), linewidths=1)
             ax[row, col + 1].scatter(mid_bins[is_measures],
                                             result['MTsat'][is_measures],
                                             c=result['Nb_voxels'][is_measures],
                                             cmap='Greys', norm=norm,
-                                            edgecolors="C1", linewidths=1)
+                                            edgecolors=cm.naviaS(3), linewidths=1)
             ax[row, col + 1].scatter(mid_bins[is_not_measures],
                                  result['MTsat'][is_not_measures],
                                  c=result['Nb_voxels'][is_not_measures],
                                  cmap='Greys', norm=norm, alpha=0.5,
-                                 edgecolors="C1", linewidths=1)
+                                 edgecolors=cm.naviaS(3), linewidths=1)
             ax[row, col + 2].scatter(mid_bins[is_measures],
                                             result['ihMTR'][is_measures],
                                             c=result['Nb_voxels'][is_measures],
                                             cmap='Greys', norm=norm,
-                                            edgecolors="C2", linewidths=1)
+                                            edgecolors=cm.naviaS(4), linewidths=1)
             ax[row, col + 2].scatter(mid_bins[is_not_measures],
                                  result['ihMTR'][is_not_measures],
                                  c=result['Nb_voxels'][is_not_measures],
                                  cmap='Greys', norm=norm, alpha=0.5,
-                                 edgecolors="C2", linewidths=1)
+                                 edgecolors=cm.naviaS(4), linewidths=1)
             ax[row, col + 3].scatter(mid_bins[is_measures],
                                             result['ihMTsat'][is_measures],
                                             c=result['Nb_voxels'][is_measures],
                                             cmap='Greys', norm=norm,
-                                            edgecolors="C3", linewidths=1)
+                                            edgecolors=cm.naviaS(5), linewidths=1)
             ax[row, col + 3].scatter(mid_bins[is_not_measures],
                                  result['ihMTsat'][is_not_measures],
                                  c=result['Nb_voxels'][is_not_measures],
                                  cmap='Greys', norm=norm, alpha=0.5,
-                                 edgecolors="C3", linewidths=1)
+                                 edgecolors=cm.naviaS(5), linewidths=1)
 
             # !!!!!!!!!!!!!!! Ajust the s values!!!!!!!!!!!!!!!!!!!
             is_not_nan = result['Nb_voxels'] > 0
             weights = np.sqrt(result['Nb_voxels'][is_not_nan]) / np.max(result['Nb_voxels'][is_not_nan])
-            mtr_fit = splrep(mid_bins[is_not_nan], result['MTR'][is_not_nan], w=weights, s=0.0005)
-            ax[row, col].plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color="C0")
-            mtsat_fit = splrep(mid_bins[is_not_nan], result['MTsat'][is_not_nan], w=weights, s=0.0005)
-            ax[row, col + 1].plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color="C1")
-            ihmtr_fit = splrep(mid_bins[is_not_nan], result['ihMTR'][is_not_nan], w=weights, s=0.0005)
-            ax[row, col + 2].plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color="C2")
-            ihmtsat_fit = splrep(mid_bins[is_not_nan], result['ihMTsat'][is_not_nan], w=weights, s=0.0005)
-            ax[row, col + 3].plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color="C3")
+            mtr_fit = splrep(mid_bins[is_not_nan], result['MTR'][is_not_nan], w=weights, s=s_mtr[i])
+            ax[row, col].plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color=cm.naviaS(2))
+            mtsat_fit = splrep(mid_bins[is_not_nan], result['MTsat'][is_not_nan], w=weights, s=s_mtsat[i])
+            ax[row, col + 1].plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color=cm.naviaS(3))
+            ihmtr_fit = splrep(mid_bins[is_not_nan], result['ihMTR'][is_not_nan], w=weights, s=s_ihmtr[i])
+            ax[row, col + 2].plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color=cm.naviaS(4))
+            ihmtsat_fit = splrep(mid_bins[is_not_nan], result['ihMTsat'][is_not_nan], w=weights, s=s_ihmtsat[i])
+            ax[row, col + 3].plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color=cm.naviaS(5))
 
             ax[row, col].set_ylim(0.975 * np.nanmin(result['MTR']),
                                   1.025 * np.nanmax(result['MTR']))
@@ -226,53 +271,53 @@ def main():
                                 whole_wm['MTR'][is_measures],
                                 c=whole_wm['Nb_voxels'][is_measures],
                                 cmap='Greys', norm=norm,
-                                edgecolors="C0", linewidths=1)
+                                edgecolors=cm.naviaS(2), linewidths=1)
             ax[row, col].scatter(whole_mid_bins[is_not_measures],
                                  whole_wm['MTR'][is_not_measures],
                                  c=whole_wm['Nb_voxels'][is_not_measures],
                                  cmap='Greys', norm=norm, alpha=0.5,
-                                 edgecolors="C0", linewidths=1)
+                                 edgecolors=cm.naviaS(2), linewidths=1)
             ax[row, col + 1].scatter(whole_mid_bins[is_measures],
                                             whole_wm['MTsat'][is_measures],
                                             c=whole_wm['Nb_voxels'][is_measures],
                                             cmap='Greys', norm=norm,
-                                            edgecolors="C1", linewidths=1)
+                                            edgecolors=cm.naviaS(3), linewidths=1)
             ax[row, col + 1].scatter(whole_mid_bins[is_not_measures],
                                  whole_wm['MTsat'][is_not_measures],
                                  c=whole_wm['Nb_voxels'][is_not_measures],
                                  cmap='Greys', norm=norm, alpha=0.5,
-                                 edgecolors="C1", linewidths=1)
+                                 edgecolors=cm.naviaS(3), linewidths=1)
             ax[row, col + 2].scatter(whole_mid_bins[is_measures],
                                             whole_wm['ihMTR'][is_measures],
                                             c=whole_wm['Nb_voxels'][is_measures],
                                             cmap='Greys', norm=norm,
-                                            edgecolors="C2", linewidths=1)
+                                            edgecolors=cm.naviaS(4), linewidths=1)
             ax[row, col + 2].scatter(whole_mid_bins[is_not_measures],
                                  whole_wm['ihMTR'][is_not_measures],
                                  c=whole_wm['Nb_voxels'][is_not_measures],
                                  cmap='Greys', norm=norm, alpha=0.5,
-                                 edgecolors="C2", linewidths=1)
+                                 edgecolors=cm.naviaS(4), linewidths=1)
             ax[row, col + 3].scatter(whole_mid_bins[is_measures],
                                             whole_wm['ihMTsat'][is_measures],
                                             c=whole_wm['Nb_voxels'][is_measures],
                                             cmap='Greys', norm=norm,
-                                            edgecolors="C3", linewidths=1)
+                                            edgecolors=cm.naviaS(5), linewidths=1)
             ax[row, col + 3].scatter(whole_mid_bins[is_not_measures],
                                  whole_wm['ihMTsat'][is_not_measures],
                                  c=whole_wm['Nb_voxels'][is_not_measures],
                                  cmap='Greys', norm=norm, alpha=0.5,
-                                 edgecolors="C3", linewidths=1)
+                                 edgecolors=cm.naviaS(5), linewidths=1)
 
             is_not_nan = whole_wm['Nb_voxels'] > 0
             weights = np.sqrt(whole_wm['Nb_voxels'][is_not_nan]) / np.max(whole_wm['Nb_voxels'][is_not_nan])
             mtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['MTR'][is_not_nan], w=weights, s=0.0005)
-            ax[row, col].plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color="C0")
+            ax[row, col].plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color=cm.naviaS(2))
             mtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['MTsat'][is_not_nan], w=weights, s=0.0005)
-            ax[row, col + 1].plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color="C1")
+            ax[row, col + 1].plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color=cm.naviaS(3))
             ihmtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['ihMTR'][is_not_nan], w=weights, s=0.0005)
-            ax[row, col + 2].plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color="C2")
+            ax[row, col + 2].plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color=cm.naviaS(4))
             ihmtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['ihMTsat'][is_not_nan], w=weights, s=0.0005)
-            ax[row, col + 3].plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color="C3")
+            ax[row, col + 3].plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color=cm.naviaS(5))
 
             ax[row, col].set_ylim(0.975 * np.nanmin(whole_wm['MTR']),
                                   1.025 * np.nanmax(whole_wm['MTR']))
