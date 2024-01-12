@@ -122,6 +122,7 @@ def main():
     s_ihmtsat[24] = 0.00005
     s_ihmtsat[25] = 0.00001
     s_ihmtsat[32] = 0.00001
+    s_ihmtsat[29] = 0.00001
 
     # out_path = out_folder / str("all_bundles_original_1f_LABELS.png")
     # out_path = out_folder / str("all_bundles_original_1f.png")
@@ -310,13 +311,13 @@ def main():
 
             is_not_nan = whole_wm['Nb_voxels'] > 0
             weights = np.sqrt(whole_wm['Nb_voxels'][is_not_nan]) / np.max(whole_wm['Nb_voxels'][is_not_nan])
-            mtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['MTR'][is_not_nan], w=weights, s=0.0005)
+            mtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['MTR'][is_not_nan], w=weights, s=0.00001)
             ax[row, col].plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color=cm.naviaS(2))
-            mtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['MTsat'][is_not_nan], w=weights, s=0.0005)
+            mtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['MTsat'][is_not_nan], w=weights, s=0.000001)
             ax[row, col + 1].plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color=cm.naviaS(3))
-            ihmtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['ihMTR'][is_not_nan], w=weights, s=0.0005)
+            ihmtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['ihMTR'][is_not_nan], w=weights, s=0.00005)
             ax[row, col + 2].plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color=cm.naviaS(4))
-            ihmtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['ihMTsat'][is_not_nan], w=weights, s=0.0005)
+            ihmtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['ihMTsat'][is_not_nan], w=weights, s=0.0000005)
             ax[row, col + 3].plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color=cm.naviaS(5))
 
             ax[row, col].set_ylim(0.975 * np.nanmin(whole_wm['MTR']),
@@ -438,8 +439,8 @@ def main():
     # if nb_bundles % 2 != 0:
     #     ax[nb_rows - 1, 1].set_yticks([])
     fig.get_layout_engine().set(h_pad=0, hspace=0)
-    plt.show()
-    # plt.savefig(out_path, dpi=500, bbox_inches='tight')
+    # plt.show()
+    plt.savefig(out_path, dpi=500, bbox_inches='tight')
     plt.close()
 
 
