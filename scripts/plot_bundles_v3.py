@@ -663,7 +663,7 @@ def main():
     #     ax[nb_rows - 1, 1].set_yticks([])
     fig.get_layout_engine().set(h_pad=0, hspace=0)
     plt.show()
-    # plt.savefig(out_path1, dpi=500, bbox_inches='tight')
+    # plt.savefig(out_path2, dpi=500, bbox_inches='tight')
     plt.close()
 
 if __name__ == "__main__":
