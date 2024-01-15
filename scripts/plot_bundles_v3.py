@@ -97,7 +97,11 @@ def main():
     highres_bins = np.arange(0, 90 + 1, 0.5)
 
     s_mtr = np.ones(34) * 0.0005
-    s_mtr[4] = 0.0001
+    s_mtr[2] = 0.00001
+    s_mtr[4] = 0.0005
+    s_mtr[8] = 0.0001
+    s_mtr[12] = 0.0001
+    s_mtr[14] = 0.00005
     s_mtr[9] = 0.00001
     s_mtr[11] = 0.001
     s_mtr[12] = 0.0001
@@ -195,21 +199,21 @@ def main():
 
             # !!!!!!!!!!!!!!! Ajust the s values!!!!!!!!!!!!!!!!!!!
             weights = np.sqrt(result['Nb_voxels'][is_not_nan]) / np.max(result['Nb_voxels'][is_not_nan])
-            mtr_fit = splrep(mid_bins[is_not_nan], result['MTR'][is_not_nan], w=weights, s=s_mtr[i])
-            ax[row, col].plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color=cm.naviaS(5))
-            mtsat_fit = splrep(mid_bins[is_not_nan], result['MTsat'][is_not_nan], w=weights, s=s_mtsat[i])
-            ax[row, col + 1].plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color=cm.naviaS(5))
+            # mtr_fit = splrep(mid_bins[is_not_nan], result['MTR'][is_not_nan], w=weights, s=s_mtr[i])
+            # ax[row, col].plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color=cm.naviaS(5))
+            # mtsat_fit = splrep(mid_bins[is_not_nan], result['MTsat'][is_not_nan], w=weights, s=s_mtsat[i])
+            # ax[row, col + 1].plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color=cm.naviaS(5))
 
-            ax[row, col].set_ylim(0.975 * np.min((np.nanmin(result['MTR']), np.nanmin(result_tilted['MTR']))),
-                                  1.025 * np.max((np.nanmax(result['MTR']), np.nanmax(result_tilted['MTR']))))
-            ax[row, col].set_yticks([np.round(np.min((np.nanmin(result['MTR']), np.nanmin(result_tilted['MTR']))), decimals=1),
-                                     np.round(np.max((np.nanmax(result['MTR']), np.nanmax(result_tilted['MTR']))), decimals=1)])
+            ax[row, col].set_ylim(0.975 * np.min((np.nanmin(result['MTR'][is_measures]), np.nanmin(result_tilted['MTR'][is_measures]))),
+                                  1.025 * np.max((np.nanmax(result['MTR'][is_measures]), np.nanmax(result_tilted['MTR'][is_measures]))))
+            ax[row, col].set_yticks([np.round(np.min((np.nanmin(result['MTR'][is_measures]), np.nanmin(result_tilted['MTR'][is_measures]))), decimals=1),
+                                     np.round(np.max((np.nanmax(result['MTR'][is_measures]), np.nanmax(result_tilted['MTR'][is_measures]))), decimals=1)])
             ax[row, col].set_xlim(0, 90)
             # ax[row, col].tick_params(axis='y', labelcolor="C0")
-            ax[row, col + 1].set_ylim(0.975 * np.min((np.nanmin(result['MTsat']), np.nanmin(result_tilted['MTsat']))),
-                                      1.025 * np.max((np.nanmax(result['MTsat']), np.nanmax(result_tilted['MTsat']))))
-            ax[row, col + 1].set_yticks([np.round(np.min((np.nanmin(result['MTsat']), np.nanmin(result_tilted['MTsat']))), decimals=1),
-                                         np.round(np.max((np.nanmax(result['MTsat']), np.nanmax(result_tilted['MTsat']))), decimals=1)])
+            ax[row, col + 1].set_ylim(0.975 * np.min((np.nanmin(result['MTsat'][is_measures]), np.nanmin(result_tilted['MTsat'][is_measures]))),
+                                      1.025 * np.max((np.nanmax(result['MTsat'][is_measures]), np.nanmax(result_tilted['MTsat'][is_measures]))))
+            ax[row, col + 1].set_yticks([np.round(np.min((np.nanmin(result['MTsat'][is_measures]), np.nanmin(result_tilted['MTsat'][is_measures]))), decimals=1),
+                                         np.round(np.max((np.nanmax(result['MTsat'][is_measures]), np.nanmax(result_tilted['MTsat'][is_measures]))), decimals=1)])
             ax[row, col + 1].set_xlim(0, 90)
             # ax[row, col + 1].tick_params(axis='y', labelcolor="C2")
 
@@ -221,15 +225,15 @@ def main():
                         result_tilted['MTR'][is_measures],
                         c=result_tilted['Nb_voxels'][is_measures],
                         cmap='Greys', norm=norm,
-                        edgecolors=cm.naviaS(7), linewidths=1)
+                        edgecolors=cm.naviaS(8), linewidths=1)
             axt.scatter(mid_bins[is_not_measures],
                         result_tilted['MTR'][is_not_measures],
                         c=result_tilted['Nb_voxels'][is_not_measures],
                         cmap='Greys', norm=norm, alpha=0.5,
-                        edgecolors=cm.naviaS(7), linewidths=1)
+                        edgecolors=cm.naviaS(8), linewidths=1)
             weights_tilted = np.sqrt(result_tilted['Nb_voxels'][is_not_nan]) / np.max(result_tilted['Nb_voxels'][is_not_nan])
-            mtr_fit = splrep(mid_bins[is_not_nan], result_tilted['MTR'][is_not_nan], w=weights_tilted, s=0.0005)
-            axt.plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color=cm.naviaS(7))
+            # mtr_fit = splrep(mid_bins[is_not_nan], result_tilted['MTR'][is_not_nan], w=weights_tilted, s=0.0005)
+            # axt.plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color=cm.naviaS(8))
 
             # axt.set_yticks([np.round(np.nanmin(result_tilted['MTR']), decimals=1),
             #                 np.round(np.nanmax(result_tilted['MTR']), decimals=1)])
@@ -239,14 +243,14 @@ def main():
                         result_tilted['MTsat'][is_measures],
                         c=result_tilted['Nb_voxels'][is_measures],
                         cmap='Greys', norm=norm,
-                        edgecolors=cm.naviaS(7), linewidths=1)
+                        edgecolors=cm.naviaS(8), linewidths=1)
             axt2.scatter(mid_bins[is_not_measures],
                         result_tilted['MTsat'][is_not_measures],
                         c=result_tilted['Nb_voxels'][is_not_measures],
                         cmap='Greys', norm=norm, alpha=0.5,
-                        edgecolors=cm.naviaS(7), linewidths=1)
-            mtsat_fit = splrep(mid_bins[is_not_nan], result_tilted['MTsat'][is_not_nan], w=weights_tilted, s=0.0005)
-            axt2.plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color=cm.naviaS(7))
+                        edgecolors=cm.naviaS(8), linewidths=1)
+            # mtsat_fit = splrep(mid_bins[is_not_nan], result_tilted['MTsat'][is_not_nan], w=weights_tilted, s=0.0005)
+            # axt2.plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color=cm.naviaS(8))
 
             # axt2.set_yticks([np.round(np.nanmin(result_tilted['MTsat']), decimals=1),
             #                 np.round(np.nanmax(result_tilted['MTsat']), decimals=1)])
@@ -261,9 +265,9 @@ def main():
             # ax[row, col + 1].patch.set_visible(False)
 
             mean_mtr = np.sum(result_tilted['MTR'][is_not_nan] * result_tilted['Nb_voxels'][is_not_nan] / np.sum(result_tilted['Nb_voxels'][is_not_nan]))
-            axt.axhline(y=mean_mtr, color=cm.naviaS(7), linewidth=1, alpha=0.5, linestyle="-")
+            axt.axhline(y=mean_mtr, color=cm.naviaS(8), linewidth=1, alpha=0.5, linestyle="-")
             mean_mtsat = np.sum(result_tilted['MTsat'][is_not_nan] * result_tilted['Nb_voxels'][is_not_nan] / np.sum(result_tilted['Nb_voxels'][is_not_nan]))
-            axt2.axhline(y=mean_mtsat, color=cm.naviaS(7), linewidth=1, alpha=0.5, linestyle="-")
+            axt2.axhline(y=mean_mtsat, color=cm.naviaS(8), linewidth=1, alpha=0.5, linestyle="-")
 
             bundle_idx += 1
         else:
@@ -297,21 +301,21 @@ def main():
             ax[row, col + 1].axhline(y=mean_mtsat, color=cm.naviaS(5), linewidth=1, alpha=0.5, linestyle="-")
 
             weights = np.sqrt(whole_wm['Nb_voxels'][is_not_nan]) / np.max(whole_wm['Nb_voxels'][is_not_nan])
-            mtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['MTR'][is_not_nan], w=weights, s=0.00001)
-            ax[row, col].plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color=cm.naviaS(5))
-            mtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['MTsat'][is_not_nan], w=weights, s=0.000001)
-            ax[row, col + 1].plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color=cm.naviaS(5))
+            # mtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['MTR'][is_not_nan], w=weights, s=0.00001)
+            # ax[row, col].plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color=cm.naviaS(5))
+            # mtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['MTsat'][is_not_nan], w=weights, s=0.000001)
+            # ax[row, col + 1].plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color=cm.naviaS(5))
 
-            ax[row, col].set_ylim(0.975 * np.min((np.nanmin(whole_wm['MTR']), np.nanmin(whole_wm_tilted['MTR']))),
-                                  1.025 * np.max((np.nanmax(whole_wm['MTR']), np.nanmax(whole_wm_tilted['MTR']))))
-            ax[row, col].set_yticks([np.round(np.min((np.nanmin(whole_wm['MTR']), np.nanmin(whole_wm_tilted['MTR']))), decimals=1),
-                                     np.round(np.max((np.nanmax(whole_wm['MTR']), np.nanmax(whole_wm_tilted['MTR']))), decimals=1)])
+            ax[row, col].set_ylim(0.975 * np.min((np.nanmin(whole_wm['MTR'][is_measures]), np.nanmin(whole_wm_tilted['MTR'][is_measures]))),
+                                  1.025 * np.max((np.nanmax(whole_wm['MTR'][is_measures]), np.nanmax(whole_wm_tilted['MTR'][is_measures]))))
+            ax[row, col].set_yticks([np.round(np.min((np.nanmin(whole_wm['MTR'][is_measures]), np.nanmin(whole_wm_tilted['MTR'][is_measures]))), decimals=1),
+                                     np.round(np.max((np.nanmax(whole_wm['MTR'][is_measures]), np.nanmax(whole_wm_tilted['MTR'][is_measures]))), decimals=1)])
             ax[row, col].set_xlim(0, 90)
             # ax[row, col].tick_params(axis='y', labelcolor="C0")
-            ax[row, col + 1].set_ylim(0.975 * np.min((np.nanmin(whole_wm['MTsat']), np.nanmin(whole_wm_tilted['MTsat']))),
-                                      1.025 * np.max((np.nanmax(whole_wm['MTsat']), np.nanmax(whole_wm_tilted['MTsat']))))
-            ax[row, col + 1].set_yticks([np.round(np.min((np.nanmin(whole_wm['MTsat']), np.nanmin(whole_wm_tilted['MTsat']))), decimals=1),
-                                        np.round(np.max((np.nanmax(whole_wm['MTsat']), np.nanmax(whole_wm_tilted['MTsat']))), decimals=1)])
+            ax[row, col + 1].set_ylim(0.975 * np.min((np.nanmin(whole_wm['MTsat'][is_measures]), np.nanmin(whole_wm_tilted['MTsat'][is_measures]))),
+                                      1.025 * np.max((np.nanmax(whole_wm['MTsat'][is_measures]), np.nanmax(whole_wm_tilted['MTsat'][is_measures]))))
+            ax[row, col + 1].set_yticks([np.round(np.min((np.nanmin(whole_wm['MTsat'][is_measures]), np.nanmin(whole_wm_tilted['MTsat'][is_measures]))), decimals=1),
+                                        np.round(np.max((np.nanmax(whole_wm['MTsat'][is_measures]), np.nanmax(whole_wm_tilted['MTsat'][is_measures]))), decimals=1)])
             ax[row, col + 1].set_xlim(0, 90)
             # ax[row, col + 1].tick_params(axis='y', labelcolor="C2")
 
@@ -324,14 +328,14 @@ def main():
                         whole_wm_tilted['MTR'][is_measures],
                         c=whole_wm_tilted['Nb_voxels'][is_measures],
                         cmap='Greys', norm=norm,
-                        edgecolors=cm.naviaS(7), linewidths=1)
+                        edgecolors=cm.naviaS(8), linewidths=1)
             axt.scatter(whole_mid_bins[is_not_measures],
                         whole_wm_tilted['MTR'][is_not_measures],
                         c=whole_wm_tilted['Nb_voxels'][is_not_measures],
                         cmap='Greys', norm=norm, alpha=0.5,
-                        edgecolors=cm.naviaS(7), linewidths=1)
-            mtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm_tilted['MTR'][is_not_nan], w=weights_tilted, s=0.00001)
-            axt.plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color=cm.naviaS(7))
+                        edgecolors=cm.naviaS(8), linewidths=1)
+            # mtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm_tilted['MTR'][is_not_nan], w=weights_tilted, s=0.00001)
+            # axt.plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color=cm.naviaS(8))
 
             # axt.set_yticks([np.round(np.nanmin(whole_wm_tilted['MTR']), decimals=1),
             #                 np.round(np.nanmax(whole_wm_tilted['MTR']), decimals=1)])
@@ -341,22 +345,22 @@ def main():
                         whole_wm_tilted['MTsat'][is_measures],
                         c=whole_wm_tilted['Nb_voxels'][is_measures],
                         cmap='Greys', norm=norm,
-                        edgecolors=cm.naviaS(7), linewidths=1)
+                        edgecolors=cm.naviaS(8), linewidths=1)
             axt2.scatter(whole_mid_bins[is_not_measures],
                         whole_wm_tilted['MTsat'][is_not_measures],
                         c=whole_wm_tilted['Nb_voxels'][is_not_measures],
                         cmap='Greys', norm=norm, alpha=0.5,
-                        edgecolors=cm.naviaS(7), linewidths=1)
-            mtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm_tilted['MTsat'][is_not_nan], w=weights_tilted, s=0.000001)
-            axt2.plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color=cm.naviaS(7))
+                        edgecolors=cm.naviaS(8), linewidths=1)
+            # mtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm_tilted['MTsat'][is_not_nan], w=weights_tilted, s=0.000001)
+            # axt2.plot(highres_bins, BSpline(*mtsat_fit)(highres_bins), "--", color=cm.naviaS(8))
 
             # axt2.set_yticks([np.round(np.nanmin(whole_wm_tilted['MTsat']), decimals=1),
             #                 np.round(np.nanmax(whole_wm_tilted['MTsat']), decimals=1)])
 
             mean_mtr = np.sum(whole_wm_tilted['MTR'][is_not_nan] * whole_wm_tilted['Nb_voxels'][is_not_nan] / np.sum(whole_wm_tilted['Nb_voxels'][is_not_nan]))
-            ax[row, col].axhline(y=mean_mtr, color=cm.naviaS(7), linewidth=1, alpha=0.5, linestyle="-")
+            ax[row, col].axhline(y=mean_mtr, color=cm.naviaS(8), linewidth=1, alpha=0.5, linestyle="-")
             mean_mtsat = np.sum(whole_wm_tilted['MTsat'][is_not_nan] * whole_wm_tilted['Nb_voxels'][is_not_nan] / np.sum(whole_wm_tilted['Nb_voxels'][is_not_nan]))
-            ax[row, col + 1].axhline(y=mean_mtsat, color=cm.naviaS(7), linewidth=1, alpha=0.5, linestyle="-")
+            ax[row, col + 1].axhline(y=mean_mtsat, color=cm.naviaS(8), linewidth=1, alpha=0.5, linestyle="-")
 
             # axt4.set_yticks([np.round(np.nanmin(whole_wm_tilted['ihMTsat']), decimals=1),
             #                 np.round(np.nanmax(whole_wm_tilted['ihMTsat']), decimals=1)])
@@ -405,8 +409,8 @@ def main():
     # if nb_bundles % 2 != 0:
     #     ax[nb_rows - 1, 1].set_yticks([])
     fig.get_layout_engine().set(h_pad=0, hspace=0)
-    plt.show()
-    # plt.savefig(out_path1, dpi=500, bbox_inches='tight')
+    # plt.show()
+    plt.savefig(out_path1, dpi=500, bbox_inches='tight')
     plt.close()
 
     # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -452,21 +456,21 @@ def main():
 
             # !!!!!!!!!!!!!!! Ajust the s values!!!!!!!!!!!!!!!!!!!
             weights = np.sqrt(result['Nb_voxels'][is_not_nan]) / np.max(result['Nb_voxels'][is_not_nan])
-            ihmtr_fit = splrep(mid_bins[is_not_nan], result['ihMTR'][is_not_nan], w=weights, s=s_ihmtr[i])
-            ax[row, col + 0].plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color=cm.naviaS(5))
-            ihmtsat_fit = splrep(mid_bins[is_not_nan], result['ihMTsat'][is_not_nan], w=weights, s=s_ihmtsat[i])
-            ax[row, col + 1].plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color=cm.naviaS(5))
+            # ihmtr_fit = splrep(mid_bins[is_not_nan], result['ihMTR'][is_not_nan], w=weights, s=s_ihmtr[i])
+            # ax[row, col + 0].plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color=cm.naviaS(5))
+            # ihmtsat_fit = splrep(mid_bins[is_not_nan], result['ihMTsat'][is_not_nan], w=weights, s=s_ihmtsat[i])
+            # ax[row, col + 1].plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color=cm.naviaS(5))
 
             # ax[row, col + 1].tick_params(axis='y', labelcolor="C2")
-            ax[row, col + 0].set_ylim(0.975 * np.min((np.nanmin(result['ihMTR']), np.nanmin(result_tilted['ihMTR']))),
-                                      1.025 * np.max((np.nanmax(result['ihMTR']), np.nanmax(result_tilted['ihMTR']))))
-            ax[row, col + 0].set_yticks([np.round(np.min((np.nanmin(result['ihMTR']), np.nanmin(result_tilted['ihMTR']))), decimals=1),
-                                         np.round(np.max((np.nanmax(result['ihMTR']), np.nanmax(result_tilted['ihMTR']))), decimals=1)])
+            ax[row, col + 0].set_ylim(0.975 * np.min((np.nanmin(result['ihMTR'][is_measures]), np.nanmin(result_tilted['ihMTR'][is_measures]))),
+                                      1.025 * np.max((np.nanmax(result['ihMTR'][is_measures]), np.nanmax(result_tilted['ihMTR'][is_measures]))))
+            ax[row, col + 0].set_yticks([np.round(np.min((np.nanmin(result['ihMTR'][is_measures]), np.nanmin(result_tilted['ihMTR'][is_measures]))), decimals=1),
+                                         np.round(np.max((np.nanmax(result['ihMTR'][is_measures]), np.nanmax(result_tilted['ihMTR'][is_measures]))), decimals=1)])
             ax[row, col + 0].set_xlim(0, 90)
-            ax[row, col + 1].set_ylim(0.975 * np.min((np.nanmin(result['ihMTsat']), np.nanmin(result_tilted['ihMTsat']))),
-                                      1.025 * np.max((np.nanmax(result['ihMTsat']), np.nanmax(result_tilted['ihMTsat']))))
-            ax[row, col + 1].set_yticks([np.round(np.min((np.nanmin(result['ihMTsat']), np.nanmin(result_tilted['ihMTsat']))), decimals=1),
-                                         np.round(np.max((np.nanmax(result['ihMTsat']), np.nanmax(result_tilted['ihMTsat']))), decimals=1)])
+            ax[row, col + 1].set_ylim(0.975 * np.min((np.nanmin(result['ihMTsat'][is_measures]), np.nanmin(result_tilted['ihMTsat'][is_measures]))),
+                                      1.025 * np.max((np.nanmax(result['ihMTsat'][is_measures]), np.nanmax(result_tilted['ihMTsat'][is_measures]))))
+            ax[row, col + 1].set_yticks([np.round(np.min((np.nanmin(result['ihMTsat'][is_measures]), np.nanmin(result_tilted['ihMTsat'][is_measures]))), decimals=1),
+                                         np.round(np.max((np.nanmax(result['ihMTsat'][is_measures]), np.nanmax(result_tilted['ihMTsat'][is_measures]))), decimals=1)])
             ax[row, col + 1].set_xlim(0, 90)
 
             is_measures = result_tilted['Nb_voxels'] >= min_nb_voxels
@@ -482,14 +486,14 @@ def main():
                         result_tilted['ihMTR'][is_measures],
                         c=result_tilted['Nb_voxels'][is_measures],
                         cmap='Greys', norm=norm,
-                        edgecolors=cm.naviaS(7), linewidths=1)
+                        edgecolors=cm.naviaS(8), linewidths=1)
             axt3.scatter(mid_bins[is_not_measures],
                         result_tilted['ihMTR'][is_not_measures],
                         c=result_tilted['Nb_voxels'][is_not_measures],
                         cmap='Greys', norm=norm, alpha=0.5,
-                        edgecolors=cm.naviaS(7), linewidths=1)
-            ihmtr_fit = splrep(mid_bins[is_not_nan], result_tilted['ihMTR'][is_not_nan], w=weights_tilted, s=0.0005)
-            axt3.plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color=cm.naviaS(7))
+                        edgecolors=cm.naviaS(8), linewidths=1)
+            # ihmtr_fit = splrep(mid_bins[is_not_nan], result_tilted['ihMTR'][is_not_nan], w=weights_tilted, s=0.0005)
+            # axt3.plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color=cm.naviaS(8))
 
             # axt3.set_yticks([np.round(np.nanmin(result_tilted['ihMTR']), decimals=1),
             #                 np.round(np.nanmax(result_tilted['ihMTR']), decimals=1)])
@@ -499,14 +503,14 @@ def main():
                         result_tilted['ihMTsat'][is_measures],
                         c=result_tilted['Nb_voxels'][is_measures],
                         cmap='Greys', norm=norm,
-                        edgecolors=cm.naviaS(7), linewidths=1)
+                        edgecolors=cm.naviaS(8), linewidths=1)
             axt4.scatter(mid_bins[is_not_measures],
                         result_tilted['ihMTsat'][is_not_measures],
                         c=result_tilted['Nb_voxels'][is_not_measures],
                         cmap='Greys', norm=norm, alpha=0.5,
-                        edgecolors=cm.naviaS(7), linewidths=1)
-            ihmtsat_fit = splrep(mid_bins[is_not_nan], result_tilted['ihMTsat'][is_not_nan], w=weights_tilted, s=0.0005)
-            axt4.plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color=cm.naviaS(7))
+                        edgecolors=cm.naviaS(8), linewidths=1)
+            # ihmtsat_fit = splrep(mid_bins[is_not_nan], result_tilted['ihMTsat'][is_not_nan], w=weights_tilted, s=0.0005)
+            # axt4.plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color=cm.naviaS(8))
 
             # axt4.set_yticks([np.round(np.nanmin(result_tilted['ihMTsat']), decimals=1),
             #                 np.round(np.nanmax(result_tilted['ihMTsat']), decimals=1)])
@@ -518,9 +522,9 @@ def main():
             # ax[row, col + 1].patch.set_visible(False)
 
             mean_ihmtr = np.sum(result_tilted['ihMTR'][is_not_nan] * result_tilted['Nb_voxels'][is_not_nan] / np.sum(result_tilted['Nb_voxels'][is_not_nan]))
-            axt3.axhline(y=mean_ihmtr, color=cm.naviaS(7), linewidth=1, alpha=0.5, linestyle="-")
+            axt3.axhline(y=mean_ihmtr, color=cm.naviaS(8), linewidth=1, alpha=0.5, linestyle="-")
             mean_ihmtsat = np.sum(result_tilted['ihMTsat'][is_not_nan] * result_tilted['Nb_voxels'][is_not_nan] / np.sum(result_tilted['Nb_voxels'][is_not_nan]))
-            axt4.axhline(y=mean_ihmtsat, color=cm.naviaS(7), linewidth=1, alpha=0.5, linestyle="-")
+            axt4.axhline(y=mean_ihmtsat, color=cm.naviaS(8), linewidth=1, alpha=0.5, linestyle="-")
 
             bundle_idx += 1
         else:
@@ -554,21 +558,21 @@ def main():
             ax[row, col + 1].axhline(y=mean_ihmtsat, color=cm.naviaS(5), linewidth=1, alpha=0.5, linestyle="-")
 
             weights = np.sqrt(whole_wm['Nb_voxels'][is_not_nan]) / np.max(whole_wm['Nb_voxels'][is_not_nan])
-            ihmtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['ihMTR'][is_not_nan], w=weights, s=0.00005)
-            ax[row, col + 0].plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color=cm.naviaS(5))
-            ihmtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['ihMTsat'][is_not_nan], w=weights, s=0.0000005)
-            ax[row, col + 1].plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color=cm.naviaS(5))
+            # ihmtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['ihMTR'][is_not_nan], w=weights, s=0.00005)
+            # ax[row, col + 0].plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color=cm.naviaS(5))
+            # ihmtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm['ihMTsat'][is_not_nan], w=weights, s=0.0000005)
+            # ax[row, col + 1].plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color=cm.naviaS(5))
 
             # ax[row, col + 1].tick_params(axis='y', labelcolor="C2")
-            ax[row, col + 0].set_ylim(0.975 * np.min((np.nanmin(whole_wm['ihMTR']), np.nanmin(whole_wm_tilted['ihMTR']))),
-                                      1.025 * np.max((np.nanmax(whole_wm['ihMTR']), np.nanmax(whole_wm_tilted['ihMTR']))))
-            ax[row, col + 0].set_yticks([np.round(np.min((np.nanmin(whole_wm['ihMTR']), np.nanmin(whole_wm_tilted['ihMTR']))), decimals=1),
-                                        np.round(np.max((np.nanmax(whole_wm['ihMTR']), np.nanmax(whole_wm_tilted['ihMTR']))), decimals=1)])
+            ax[row, col + 0].set_ylim(0.975 * np.min((np.nanmin(whole_wm['ihMTR'][is_measures]), np.nanmin(whole_wm_tilted['ihMTR'][is_measures]))),
+                                      1.025 * np.max((np.nanmax(whole_wm['ihMTR'][is_measures]), np.nanmax(whole_wm_tilted['ihMTR'][is_measures]))))
+            ax[row, col + 0].set_yticks([np.round(np.min((np.nanmin(whole_wm['ihMTR'][is_measures]), np.nanmin(whole_wm_tilted['ihMTR'][is_measures]))), decimals=1),
+                                        np.round(np.max((np.nanmax(whole_wm['ihMTR'][is_measures]), np.nanmax(whole_wm_tilted['ihMTR'][is_measures]))), decimals=1)])
             ax[row, col + 0].set_xlim(0, 90)
-            ax[row, col + 1].set_ylim(0.975 * np.min((np.nanmin(whole_wm['ihMTsat']), np.nanmin(whole_wm_tilted['ihMTsat']))),
-                                      1.025 * np.max((np.nanmax(whole_wm['ihMTsat']), np.nanmax(whole_wm_tilted['ihMTsat']))))
-            ax[row, col + 1].set_yticks([np.round(np.min((np.nanmin(whole_wm['ihMTsat']), np.nanmin(whole_wm_tilted['ihMTsat']))), decimals=1),
-                                        np.round(np.max((np.nanmax(whole_wm['ihMTsat']), np.nanmax(whole_wm_tilted['ihMTsat']))), decimals=1)])
+            ax[row, col + 1].set_ylim(0.975 * np.min((np.nanmin(whole_wm['ihMTsat'][is_measures]), np.nanmin(whole_wm_tilted['ihMTsat'][is_measures]))),
+                                      1.025 * np.max((np.nanmax(whole_wm['ihMTsat'][is_measures]), np.nanmax(whole_wm_tilted['ihMTsat'][is_measures]))))
+            ax[row, col + 1].set_yticks([np.round(np.min((np.nanmin(whole_wm['ihMTsat'][is_measures]), np.nanmin(whole_wm_tilted['ihMTsat'][is_measures]))), decimals=1),
+                                        np.round(np.max((np.nanmax(whole_wm['ihMTsat'][is_measures]), np.nanmax(whole_wm_tilted['ihMTsat'][is_measures]))), decimals=1)])
             ax[row, col + 1].set_xlim(0, 90)
 
             is_measures = whole_wm_tilted['Nb_voxels'] >= min_nb_voxels
@@ -584,14 +588,14 @@ def main():
                         whole_wm_tilted['ihMTR'][is_measures],
                         c=whole_wm_tilted['Nb_voxels'][is_measures],
                         cmap='Greys', norm=norm,
-                        edgecolors=cm.naviaS(7), linewidths=1)
+                        edgecolors=cm.naviaS(8), linewidths=1)
             axt3.scatter(whole_mid_bins[is_not_measures],
                         whole_wm_tilted['ihMTR'][is_not_measures],
                         c=whole_wm_tilted['Nb_voxels'][is_not_measures],
                         cmap='Greys', norm=norm, alpha=0.5,
-                        edgecolors=cm.naviaS(7), linewidths=1)
-            ihmtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm_tilted['ihMTR'][is_not_nan], w=weights_tilted, s=0.00005)
-            axt3.plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color=cm.naviaS(7))
+                        edgecolors=cm.naviaS(8), linewidths=1)
+            # ihmtr_fit = splrep(whole_mid_bins[is_not_nan], whole_wm_tilted['ihMTR'][is_not_nan], w=weights_tilted, s=0.00005)
+            # axt3.plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color=cm.naviaS(8))
 
             # axt3.set_yticks([np.round(np.nanmin(whole_wm_tilted['ihMTR']), decimals=1),
             #                 np.round(np.nanmax(whole_wm_tilted['ihMTR']), decimals=1)])
@@ -601,19 +605,19 @@ def main():
                         whole_wm_tilted['ihMTsat'][is_measures],
                         c=whole_wm_tilted['Nb_voxels'][is_measures],
                         cmap='Greys', norm=norm,
-                        edgecolors=cm.naviaS(7), linewidths=1)
+                        edgecolors=cm.naviaS(8), linewidths=1)
             axt4.scatter(whole_mid_bins[is_not_measures],
                         whole_wm_tilted['ihMTsat'][is_not_measures],
                         c=whole_wm_tilted['Nb_voxels'][is_not_measures],
                         cmap='Greys', norm=norm, alpha=0.5,
-                        edgecolors=cm.naviaS(7), linewidths=1)
-            ihmtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm_tilted['ihMTsat'][is_not_nan], w=weights_tilted, s=0.0000005)
-            axt4.plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color=cm.naviaS(7))
+                        edgecolors=cm.naviaS(8), linewidths=1)
+            # ihmtsat_fit = splrep(whole_mid_bins[is_not_nan], whole_wm_tilted['ihMTsat'][is_not_nan], w=weights_tilted, s=0.0000005)
+            # axt4.plot(highres_bins, BSpline(*ihmtsat_fit)(highres_bins), "--", color=cm.naviaS(8))
 
             mean_ihmtr = np.sum(whole_wm_tilted['ihMTR'][is_not_nan] * whole_wm_tilted['Nb_voxels'][is_not_nan] / np.sum(whole_wm_tilted['Nb_voxels'][is_not_nan]))
-            ax[row, col + 0].axhline(y=mean_ihmtr, color=cm.naviaS(7), linewidth=1, alpha=0.5, linestyle="-")
+            ax[row, col + 0].axhline(y=mean_ihmtr, color=cm.naviaS(8), linewidth=1, alpha=0.5, linestyle="-")
             mean_ihmtsat = np.sum(whole_wm_tilted['ihMTsat'][is_not_nan] * whole_wm_tilted['Nb_voxels'][is_not_nan] / np.sum(whole_wm_tilted['Nb_voxels'][is_not_nan]))
-            ax[row, col + 1].axhline(y=mean_ihmtsat, color=cm.naviaS(7), linewidth=1, alpha=0.5, linestyle="-")
+            ax[row, col + 1].axhline(y=mean_ihmtsat, color=cm.naviaS(8), linewidth=1, alpha=0.5, linestyle="-")
 
             # axt4.set_yticks([np.round(np.nanmin(whole_wm_tilted['ihMTsat']), decimals=1),
             #                 np.round(np.nanmax(whole_wm_tilted['ihMTsat']), decimals=1)])
@@ -662,8 +666,8 @@ def main():
     # if nb_bundles % 2 != 0:
     #     ax[nb_rows - 1, 1].set_yticks([])
     fig.get_layout_engine().set(h_pad=0, hspace=0)
-    plt.show()
-    # plt.savefig(out_path2, dpi=500, bbox_inches='tight')
+    # plt.show()
+    plt.savefig(out_path2, dpi=500, bbox_inches='tight')
     plt.close()
 
 if __name__ == "__main__":
