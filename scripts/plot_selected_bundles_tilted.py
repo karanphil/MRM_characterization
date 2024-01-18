@@ -97,53 +97,19 @@ def main():
     highres_bins = np.arange(0, 90 + 1, 0.5)
 
     s_mtr = np.ones(34) * 0.0005
-    s_mtr[2] = 0.00001
-    s_mtr[4] = 0.0005
-    s_mtr[8] = 0.0001
-    s_mtr[12] = 0.0001
-    s_mtr[14] = 0.00005
-    s_mtr[9] = 0.00001
-    s_mtr[11] = 0.001
-    s_mtr[12] = 0.0001
-    s_mtr[16] = 0.1
-    s_mtr[17] = 0.1
-    s_mtr[24] = 0.005
-    s_mtr[25] = 0.01
-    s_mtr[26] = 0.01
+    s_mtr[6] = 0.00005
+    s_mtr[5] = 0.001
 
     s_mtsat = np.ones(34) * 0.0005
     s_mtsat[1] = 0.00001
-    s_mtsat[4] = 0.000001
-    s_mtsat[16] = 0.1
-    s_mtsat[17] = 0.1
-    s_mtsat[25] = 0.00005
-    s_mtsat[26] = 0.00005
-    s_mtsat[27] = 0.00005
-    s_mtsat[28] = 0.00005
-    s_mtsat[29] = 0.00005
 
     s_ihmtr = np.ones(34) * 0.0005
     s_ihmtr[1] = 0.0001
-    s_ihmtr[2] = 0.00005
-    s_ihmtr[4] = 0.00005
-    s_ihmtr[9] = 0.00001
-    s_ihmtr[11] = 0.001
-    s_ihmtr[16] = 0.001
-    s_ihmtr[17] = 0.1
-    s_ihmtr[24] = 0.001
-    s_ihmtr[32] = 0.00005
+    s_ihmtr[5] = 0.001
 
     s_ihmtsat = np.ones(34) * 0.0005
     s_ihmtsat[1] = 0.000005
-    s_ihmtsat[4] = 0.000001
-    s_ihmtsat[5] = 0.00001
-    s_ihmtsat[9] = 0.0000001
-    s_ihmtsat[16] = 0.01
-    s_ihmtsat[17] = 0.01
-    s_ihmtsat[24] = 0.00005
-    s_ihmtsat[25] = 0.00001
-    s_ihmtsat[32] = 0.00001
-    s_ihmtsat[29] = 0.00001
+    s_ihmtsat[2] = 0.00001
 
     # out_path = out_folder / str("all_bundles_original_1f_LABELS.png")
     # out_path = out_folder / str("all_bundles_original_1f.png")
