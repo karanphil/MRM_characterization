@@ -118,13 +118,13 @@ def main():
     # out_path = out_folder / str("all_bundles_original_1f.png")
     out_path1 = out_folder / str("few_bundles_rotated_1f.png")
     # out_path2 = out_folder / str("few_bundles_rotated_1f_ihMT.png")
-    plot_init(dims=(10, 8), font_size=10)
+    plot_init(dims=(8, 8), font_size=10)
     plt.rcParams['legend.fontsize'] = 6
     plt.rcParams['ytick.labelsize'] = 8
     plt.rcParams['xtick.labelsize'] = 8
     plt.rcParams['lines.linewidth'] = 0.5
     plt.rcParams['lines.markersize'] = 3
-    plt.rcParams['axes.titlesize'] = 10
+    plt.rcParams['axes.titlesize'] = 12
 
     fig, ax = plt.subplots(nb_rows, 4, layout='constrained')
     for i in range(nb_bundles):
