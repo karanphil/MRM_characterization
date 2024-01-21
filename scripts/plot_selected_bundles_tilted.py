@@ -25,6 +25,7 @@ def _build_arg_parser():
                    action='append', required=True,
                    help='List of characterization results.')
     p.add_argument('--bundles_names', nargs='+', default=[], action='append',
+                   required=True,
                    help='List of names for the characterized bundles.')
 
     p.add_argument('--whole_WM', default=[],
@@ -50,24 +51,32 @@ def main():
     out_folder = Path(args.out_folder)
     min_nb_voxels = args.min_nb_voxels
 
+    bundles_names = args.bundles_names[0]
+
     results = []
     results_tilted = []
     extracted_bundles = []
     max_count = 0
+    tmp = 0
     for i, result in enumerate(args.results[0]):
-        print("Loading: ", result)
-        results.append(np.load(result))
-        extracted_bundles.append(str(Path(result).parent.name))
-        curr_max_count = np.max(results[i]['Nb_voxels'])
-        if curr_max_count > max_count:
-            max_count = curr_max_count
+        if str(Path(result).parent) in bundles_names:
+            print("Loading: ", result)
+            results.append(np.load(result))
+            extracted_bundles.append(str(Path(result).parent.name))
+            curr_max_count = np.max(results[tmp]['Nb_voxels'])
+            if curr_max_count > max_count:
+                max_count = curr_max_count
+            tmp += 1
 
+    tmp = 0
     for i, result in enumerate(args.results_tilted[0]):
-        print("Loading: ", result)
-        results_tilted.append(np.load(result))
-        curr_max_count = np.max(results_tilted[i]['Nb_voxels'])
-        if curr_max_count > max_count:
-            max_count = curr_max_count
+        if str(Path(result).parent.stem) in bundles_names:
+            print("Loading: ", result)
+            results_tilted.append(np.load(result))
+            curr_max_count = np.max(results_tilted[tmp]['Nb_voxels'])
+            if curr_max_count > max_count:
+                max_count = curr_max_count
+            tmp += 1
 
     if args.whole_WM:
         print("Loading: ", args.whole_WM)
@@ -77,12 +86,6 @@ def main():
     if args.whole_WM_tilted:
         print("Loading: ", args.whole_WM_tilted)
         whole_wm_tilted = np.load(args.whole_WM_tilted)
-
-    if args.bundles_names != []:
-        bundles_names = args.bundles_names[0]
-    else:
-        bundles_names = np.copy(extracted_bundles)
-        bundles_names = list(bundles_names)
 
     # if "MCP" in bundles_names:
     #     bundles_names.remove("MCP")
@@ -113,9 +116,9 @@ def main():
 
     # out_path = out_folder / str("all_bundles_original_1f_LABELS.png")
     # out_path = out_folder / str("all_bundles_original_1f.png")
-    out_path1 = out_folder / str("few_bundles_rotated_1f_MT.png")
-    out_path2 = out_folder / str("few_bundles_rotated_1f_ihMT.png")
-    plot_init(dims=(5, 8), font_size=10)
+    out_path1 = out_folder / str("few_bundles_rotated_1f.png")
+    # out_path2 = out_folder / str("few_bundles_rotated_1f_ihMT.png")
+    plot_init(dims=(10, 8), font_size=10)
     plt.rcParams['legend.fontsize'] = 8
     plt.rcParams['ytick.labelsize'] = 8
     plt.rcParams['xtick.labelsize'] = 8
