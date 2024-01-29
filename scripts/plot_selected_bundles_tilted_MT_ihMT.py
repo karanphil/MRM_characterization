@@ -124,7 +124,7 @@ def main():
     plt.rcParams['xtick.labelsize'] = 8
     plt.rcParams['lines.linewidth'] = 0.5
     plt.rcParams['lines.markersize'] = 3
-    plt.rcParams['axes.titlesize'] = 12
+    plt.rcParams['axes.titlesize'] = 10
 
     fig, ax = plt.subplots(nb_rows, 4, layout='constrained')
     for i in range(nb_bundles):
