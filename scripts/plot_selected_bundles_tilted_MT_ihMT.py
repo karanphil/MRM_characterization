@@ -347,7 +347,7 @@ def main():
                                             whole_wm['ihMTsat'][is_measures],
                                             c=whole_wm['Nb_voxels'][is_measures],
                                             cmap='Greys', norm=norm,
-                                            edgecolors=cm.naviaS(5), linewidths=1, label="Regular")
+                                            edgecolors=cm.naviaS(5), linewidths=1, label="Standard")
             ax[row, col + 3].scatter(whole_mid_bins[is_not_measures],
                                  whole_wm['ihMTsat'][is_not_measures],
                                  c=whole_wm['Nb_voxels'][is_not_measures],
