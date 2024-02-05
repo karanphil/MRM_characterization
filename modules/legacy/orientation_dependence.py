@@ -1,6 +1,52 @@
 import numpy as np
 
-from modules.utils import compute_peaks_fraction
+from scipy.stats import (shapiro, kstest)
+
+from modules.utils import (extend_measure, compute_peaks_fraction,
+                           nb_peaks_factor)
+
+
+def analyse_delta_m_max(bins, means_diag, sf_delta_m_max, nb_voxels,
+                        frac_thrs=np.array([0.5, 0.6, 0.7, 0.8, 0.9]),
+                        min_nb_voxels_to_fit=400):
+
+    min_idx = np.nanargmin(means_diag[0], axis=0)
+    max_idx = np.nanargmax(means_diag[0], axis=0)
+    measures_idx = np.arange(means_diag.shape[-1])
+    means_min = means_diag[:, min_idx, measures_idx]
+    means_max = means_diag[:, max_idx, measures_idx]
+    min_bins = (bins[min_idx] + bins[min_idx + 1]) /2 # +1 might cause problems
+    max_bins = (bins[max_idx] + bins[max_idx + 1]) /2 # for last index
+
+    delta_m_max = np.zeros((len(frac_thrs), means_diag.shape[-1]))
+    delta_m_max[0:4] = means_max - means_min
+    delta_m_max[4] = sf_delta_m_max
+    delta_m_max /= delta_m_max[4]
+
+    frac_thrs_mid = np.zeros((len(frac_thrs)))
+    frac_thrs_mid[-1] = 1
+    frac_thrs_mid[0:-1] = (frac_thrs[:-1] + frac_thrs[1:])/2.
+
+    frac_idx = np.arange(len(frac_thrs) - 1)
+
+    slope = np.zeros((means_diag.shape[-1]))
+    origin = np.zeros((means_diag.shape[-1]))
+    for i in range(means_diag.shape[-1]):
+        min_nb_voxels = nb_voxels[:, min_idx[i]]
+        max_nb_voxels = nb_voxels[:, max_idx[i]]
+        nb_voxels_check = (min_nb_voxels >= min_nb_voxels_to_fit) & (max_nb_voxels >= min_nb_voxels_to_fit)
+        idx_to_fit = frac_idx[nb_voxels_check]
+        idx_to_fit =  np.concatenate((idx_to_fit, [-1]))
+        delta_m_max_to_fit = np.take(delta_m_max[:, i], idx_to_fit) - 1
+        frac_thrs_to_fit = np.take(frac_thrs_mid, idx_to_fit) - 1
+        frac_thrs_to_fit = frac_thrs_to_fit[~np.isnan(delta_m_max_to_fit)]
+        delta_m_max_to_fit = delta_m_max_to_fit[~np.isnan(delta_m_max_to_fit)]
+        frac_thrs_to_fit = frac_thrs_to_fit[:, np.newaxis]
+        slope[i], _, _, _ = np.linalg.lstsq(frac_thrs_to_fit, 
+                                            delta_m_max_to_fit, rcond=None)
+        origin[i] = slope[i] * (-1) + 1
+
+    return slope, origin, delta_m_max, frac_thrs_mid, min_bins, max_bins
 
 
 def compute_three_fibers_means(peaks, peak_values, wm_mask, affine, nufo,
@@ -157,3 +203,29 @@ def compute_single_fiber_means(peaks, fa, wm_mask, affine,
             measure_means[i] = np.mean(measures[mask_total], axis=0)
 
     return bins, measure_means, nb_voxels
+
+
+def fit_single_fiber_results(bins, means, poly_order=10, is_measures=None,
+                             weights=None, scale_poly_order=False):
+    if is_measures is None:
+        is_measures = np.ones(means.shape[0])
+    if weights is None:
+        weights = np.ones(means.shape[0])
+    fits = np.zeros((poly_order + 1, means.shape[-1]))
+    for i in range(means.shape[-1]):
+        new_bins, new_means, new_is_measures, new_weights =\
+            extend_measure(bins, means[..., i], is_measure=is_measures,
+                           weights=weights)
+        # mid_bins = (new_bins[:-1] + new_bins[1:]) / 2.
+        if scale_poly_order:
+            effective_poly_order = int(np.floor(poly_order *\
+                (new_bins[-2] - new_bins[1]) / (bins[-1] - bins[1])))
+        else:
+            effective_poly_order = poly_order
+        print("Polyfit order was set to", effective_poly_order)
+        fits[poly_order - effective_poly_order:, i] =\
+            np.polyfit(new_bins[new_is_measures],
+                       new_means[new_is_measures],
+                       effective_poly_order,
+                       w=new_weights[new_is_measures])
+    return fits
