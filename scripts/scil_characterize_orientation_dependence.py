@@ -153,7 +153,7 @@ def main():
               voxels. Try to carefully reduce the min_nb_voxels."""
         raise ValueError(msg)
 
-    out_path = out_folder / '1f_original_results'
+    out_path = out_folder / '1f_results'
     print("Saving results as npz files.")
     save_results_as_npz(bins, measure_means, nb_voxels,
                         measures_name, out_path)
@@ -192,29 +192,32 @@ def main():
     measure_means_diag = np.diagonal(measure_means, axis1=1, axis2=2)
     measure_means_diag = np.swapaxes(measure_means_diag, 1, 2)
     nb_voxels_diag = np.diagonal(nb_voxels, axis1=1, axis2=2)
+    is_measures = nb_voxels_diag >= min_nb_voxels
 
     print("Saving results as npz files.")
-    out_path = out_folder / "2f_original_results"
+    out_path = out_folder / "2f_results"
     save_results_as_npz(bins, measure_means, nb_voxels,
                         measures_name, out_path)
     if args.save_plots:
         print("Saving two-fiber results as plots.")
         plot_3d_means(bins, measure_means[0, :, :, :], plots_folder,
-                      measures_name, nametype="original")
+                      measures_name)
         plot_multiple_means(bins, measure_means_diag,
                             nb_voxels_diag, plots_folder, measures_name,
                             labels=labels, legend_title=r"Peak$_1$ fraction",
-                            endname="2D_2f")
+                            endname="2D_2f", is_measures=is_measures)
 
     if args.compute_three_fiber_crossings:
         print("Computing 3 crossing fibers means.")
         bins, measure_means, nb_voxels, labels =\
             compute_three_fibers_means(peaks, peak_values, wm_mask, affine,
-                                    nufo, measures, bin_width=args.bin_width_3f,
-                                    roi=roi)
+                                       nufo, measures,
+                                       bin_width=args.bin_width_3f,
+                                       roi=roi)
+        is_measures = nb_voxels >= min_nb_voxels
 
         print("Saving results as npz files.")
-        out_path = out_folder / "3f_original_results"
+        out_path = out_folder / "3f_results"
         save_results_as_npz(bins, measure_means,
                             nb_voxels, measures_name, out_path)
 
@@ -224,7 +227,7 @@ def main():
                                 nb_voxels, plots_folder,
                                 measures_name, endname="2D_3f", labels=labels,
                                 legend_title=r"Peak$_1$ fraction",
-                                nametype="original")
+                                is_measures=is_measures, color_start=10)
 
 if __name__ == "__main__":
     main()
