@@ -10,8 +10,6 @@ from modules.orientation_dependence import (compute_three_fibers_means,
                                             compute_two_fibers_means,
                                             compute_single_fiber_means)
 
-from scilpy.io.utils import (add_overwrite_arg)
-
 
 def _build_arg_parser():
     p = argparse.ArgumentParser(
@@ -82,7 +80,6 @@ def _build_arg_parser():
     s3.add_argument('--plots_folder',
                     help='Output folder of where to save the plots.')
 
-    add_overwrite_arg(p)
     return p
 
 

@@ -9,8 +9,6 @@ from pathlib import Path
 
 from modules.io import plot_init, extract_measures
 
-from scilpy.io.utils import (add_overwrite_arg)
-
 
 def _build_arg_parser():
     p = argparse.ArgumentParser(
@@ -35,7 +33,6 @@ def _build_arg_parser():
     p.add_argument('--combine_colorbar', action='store_false',
                    help='Combine colorbar or not.')
 
-    add_overwrite_arg(p)
     return p
 
 

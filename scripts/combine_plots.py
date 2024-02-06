@@ -6,8 +6,6 @@ from pathlib import Path
 
 from modules.io import plot_init
 
-from scilpy.io.utils import (add_overwrite_arg)
-
 
 def _build_arg_parser():
     p = argparse.ArgumentParser(
@@ -30,7 +28,6 @@ def _build_arg_parser():
                    help='Value of the minimal number of voxels per bin '
                         '[%(default)s].')
 
-    add_overwrite_arg(p)
     return p
 
 
