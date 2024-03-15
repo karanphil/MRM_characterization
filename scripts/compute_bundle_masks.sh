@@ -1,0 +1,13 @@
+wdir="/home/pkaran/Samsung/data/MT_Diffusion/myelo_inferno/bundles";
+cd $wdir;
+list_subs=("sub-012-hc_ses-5" "sub-014-hc_ses-5" "sub-015-hc_ses-5" "sub-016-hc_ses-5" "sub-018-hc_ses-5" "sub-019-hc_ses-5" "sub-020-hc_ses-5" "sub-021-hc_ses-5" "sub-022-hc_ses-5" "sub-023-hc_ses-5" "sub-024-hc_ses-5" "sub-026-hc_ses-5" "sub-026-hc_ses-4" "sub-026-hc_ses-3" "sub-026-hc_ses-2" "sub-026-hc_ses-1");
+for sub in "${list_subs[@]}";
+    do echo $sub;
+    mkdir -p ${sub}/masks;
+    all_bundles=${sub}/bundles/*.trk;
+    for bundle in $all_bundles;
+        do  echo $(basename -- "${bundle%%.*}");
+        scil_tractogram_remove_invalid.py $bundle $bundle -f;
+        scil_tractogram_compute_density_map.py $bundle ${sub}/masks/$(basename -- "${bundle%%.*}").nii.gz --binary -f;
+    done;
+done;
