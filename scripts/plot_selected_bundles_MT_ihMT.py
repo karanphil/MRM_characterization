@@ -2,6 +2,7 @@ import argparse
 from cmcrameri import cm
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FormatStrFormatter
 import numpy as np
 from pathlib import Path
 from scipy.interpolate import splrep, BSpline
@@ -77,18 +78,18 @@ def main():
     mid_bins = (results[0]['Angle_min'] + results[0]['Angle_max']) / 2.
     highres_bins = np.arange(0, 90 + 1, 0.5)
 
-    s_mtr = np.ones(15) * 0.0005
+    s_mtr = np.ones(nb_bundles) * 0.0005
     s_mtr[5] = 0.001
 
-    s_mtsat = np.ones(15) * 0.0005
+    s_mtsat = np.ones(nb_bundles) * 0.0005
     s_mtsat[1] = 0.00001
     s_mtsat[5] = 0.0001
 
-    s_ihmtr = np.ones(15) * 0.0005
+    s_ihmtr = np.ones(nb_bundles) * 0.0005
     s_ihmtr[1] = 0.0001
     s_ihmtr[5] = 0.001
 
-    s_ihmtsat = np.ones(15) * 0.0005
+    s_ihmtsat = np.ones(nb_bundles) * 0.0005
     s_ihmtsat[1] = 0.000005
     s_ihmtsat[2] = 0.00001
     s_ihmtsat[7] = 0.000005
@@ -266,6 +267,8 @@ def main():
             ax[row, col + 3].set_yticks([np.round(np.nanmin(whole_wm['ihMTsat']), decimals=1),
                                          np.round(np.nanmax(whole_wm['ihMTsat']), decimals=1)])
             ax[row, col + 3].set_xlim(0, 90)
+
+        ax[row, col].yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 
         # if col == 0:
         #     ax[row, col + 1].legend(handles=[colorbar], labels=[bundles_names[i]],
