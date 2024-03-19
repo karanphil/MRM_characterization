@@ -20,6 +20,13 @@ def _build_arg_parser():
     
     p.add_argument('--measures', nargs='+', required=True,
                    help='List of all measures to analyse.')
+    
+    p.add_argument('--names', nargs='+', required=True, action='append',
+                   help='List of names.')
+
+    p.add_argument('--variation', action='store_true')
+
+    p.add_argument('--correlation', action='store_true')
 
     g = p.add_argument_group(title='Characterization parameters')
     g.add_argument('--min_nb_voxels', default=30, type=int,
@@ -34,16 +41,23 @@ def main():
     args = parser.parse_args()
 
     min_nb_voxels = args.min_nb_voxels
+    names = args.names[0]
 
     print(args.in_results)
+    print(names)
 
     results = []
     for i, result in enumerate(args.in_results):
-        print("Loading: ", result)
-        results.append(np.load(result))
+        if str(Path(result).parent) in names:
+            print("Loading: ", result)
+            results.append(np.load(result))
 
+    print(results)
     nb_bins = len(results[0]['Angle_min'])
     nb_results = len(results)
+    norm = mpl.colors.Normalize(vmin=0, vmax=1)
+
+    plot_init()
 
     for measure in args.measures:
         print(measure)
@@ -51,8 +65,23 @@ def main():
         for i, result in enumerate(results):
             to_analyse[i] = result[measure]
 
-        coeff_var = scipy.stats.variation(to_analyse, axis=0, nan_policy='omit')
-        print(np.mean(coeff_var))
+        if args.variation:
+            coeff_var = scipy.stats.variation(to_analyse, axis=0,
+                                              nan_policy='omit')
+            print(np.mean(coeff_var))
+
+        if args.correlation:
+            # to_analyse = np.ma.masked_values(to_analyse, np.nan)
+            print(to_analyse)
+            corr = np.ma.corrcoef(to_analyse, allow_masked=True)
+            print(corr)
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            cax = ax.matshow(corr, cmap=cm.navia, norm=norm)
+            fig.colorbar(cax)
+            ax.set_xticklabels(names)
+            ax.set_yticklabels(names)
+            plt.show()
 
 
 if __name__ == "__main__":
