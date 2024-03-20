@@ -4,6 +4,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
+import pandas as pd
 import scipy.stats
 
 from modules.io import plot_init
@@ -21,7 +22,7 @@ def _build_arg_parser():
     p.add_argument('--measures', nargs='+', required=True,
                    help='List of all measures to analyse.')
     
-    p.add_argument('--names', nargs='+', required=True, action='append',
+    p.add_argument('--names', nargs='+',
                    help='List of names.')
 
     p.add_argument('--variation', action='store_true')
@@ -41,23 +42,30 @@ def main():
     args = parser.parse_args()
 
     min_nb_voxels = args.min_nb_voxels
-    names = args.names[0]
+    names = []
+    if args.names:
+        names = args.names
+        print(names)
 
     print(args.in_results)
-    print(names)
 
     results = []
     for i, result in enumerate(args.in_results):
-        if str(Path(result).parent) in names:
+        if args.names:
+            if str(Path(result).parent) in names:
+                print("Loading: ", result)
+                results.append(np.load(result))
+        else:
             print("Loading: ", result)
             results.append(np.load(result))
+            names.append(str(Path(result).parent))
 
     print(results)
     nb_bins = len(results[0]['Angle_min'])
     nb_results = len(results)
     norm = mpl.colors.Normalize(vmin=0, vmax=1)
 
-    plot_init()
+    plot_init(font_size=8, dims=(10, 10))
 
     for measure in args.measures:
         print(measure)
@@ -71,17 +79,18 @@ def main():
             print(np.mean(coeff_var))
 
         if args.correlation:
-            # to_analyse = np.ma.masked_values(to_analyse, np.nan)
-            print(to_analyse)
-            corr = np.ma.corrcoef(to_analyse, allow_masked=True)
-            print(corr)
+            dataset = pd.DataFrame(data=to_analyse.T)
+            corr = dataset.corr()
             fig = plt.figure()
             ax = fig.add_subplot(111)
-            cax = ax.matshow(corr, cmap=cm.navia, norm=norm)
+            cax = ax.matshow(corr, cmap=cm.navia, norm=norm) # abs? Que faire des coeff négatifs?
             fig.colorbar(cax)
-            ax.set_xticklabels(names)
+            ax.set_xticks(np.arange(0, 33, 1))
+            ax.set_yticks(np.arange(0, 33, 1))
+            ax.set_xticklabels(names, rotation=90)
             ax.set_yticklabels(names)
             plt.show()
+            # plt.savefig("toto1.png", dpi=500,)
 
 
 if __name__ == "__main__":
