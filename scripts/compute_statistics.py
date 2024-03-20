@@ -83,8 +83,7 @@ def main():
             to_analyse[i, result['Nb_voxels'] < min_nb_voxels] = np.nan
 
         if args.variation:
-            coeff_var = scipy.stats.variation(to_analyse, axis=0,
-                                              nan_policy='omit')
+            coeff_var = scipy.stats.variation(to_analyse, axis=0)
             print(np.nanmean(coeff_var))
 
         if args.is_bundles:
@@ -108,10 +107,10 @@ def main():
                 for next_b_idx in range(b_idx):
                     pair_array[0] = to_analyse[b_idx]
                     pair_array[1] = to_analyse[next_b_idx]
-                    variation_matrix[b_idx, next_b_idx] = np.nanmean(scipy.stats.variation(pair_array, axis=0, nan_policy='omit'))
+                    variation_matrix[b_idx, next_b_idx] = np.nanmean(scipy.stats.variation(pair_array, axis=0))
                     variation_matrix[next_b_idx, b_idx] = variation_matrix[b_idx, next_b_idx]
 
-            norm = mpl.colors.Normalize(vmin=0, vmax=np.max(variation_matrix) * 100)
+            norm = mpl.colors.Normalize(vmin=0, vmax=np.ceil(np.max(variation_matrix) * 100))
             fig = plt.figure()
             ax = fig.add_subplot(111)
             cax = ax.matshow(variation_matrix * 100, cmap=cm.navia, norm=norm)
