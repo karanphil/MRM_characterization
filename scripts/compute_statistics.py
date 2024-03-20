@@ -83,10 +83,10 @@ def main():
             corr = dataset.corr()
             fig = plt.figure()
             ax = fig.add_subplot(111)
-            cax = ax.matshow(corr, cmap=cm.navia, norm=norm) # abs? Que faire des coeff négatifs?
+            cax = ax.matshow(corr, cmap=cm.navia_r, norm=norm) # abs? Que faire des coeff négatifs?
             fig.colorbar(cax)
-            ax.set_xticks(np.arange(0, 33, 1))
-            ax.set_yticks(np.arange(0, 33, 1))
+            ax.set_xticks(np.arange(0, nb_results, 1))
+            ax.set_yticks(np.arange(0, nb_results, 1))
             ax.set_xticklabels(names, rotation=90)
             ax.set_yticklabels(names)
             plt.show()
