@@ -16,28 +16,16 @@ def _build_arg_parser():
     p.add_argument('out_dir',
                    help='Path of the output directory.')
     
-    p.add_argument('--in_results', nargs='+', required=True,
-                   help='List of all results directories.')
+    p.add_argument('--in_stats', nargs='+', required=True,
+                   help='List of all stats files.')
     
-    p.add_argument('--measures', nargs='+', required=True,
-                   help='List of all measures to analyse.')
-    
-    p.add_argument('--names', nargs='+',
-                   help='List of names.')
-    
-    p.add_argument('--whole_wm', default=[],
-                   help='Path to the whole WM characterization.')
-    
-    p.add_argument('--suffix', default='', type=str)
+    p.add_argument('--stat_name', required=True)
 
-    p.add_argument('--variation', action='store_true')
+    p.add_argument('--measures_name', required=True)
 
-    p.add_argument('--is_bundles', action='store_true')
+    p.add_argument('--mean', action='store_true')
 
-    g = p.add_argument_group(title='Characterization parameters')
-    g.add_argument('--min_nb_voxels', default=30, type=int,
-                   help='Value of the minimal number of voxels per bin '
-                        '[%(default)s].')
+    p.add_argument('--multi', action='store_true')
 
     return p
 
@@ -46,34 +34,16 @@ def main():
     parser = _build_arg_parser()
     args = parser.parse_args()
 
-    min_nb_voxels = args.min_nb_voxels
-    names = []
-    if args.names:
-        names = args.names
-
     out_dir = Path(args.out_dir)
 
     results = []
     for i, result in enumerate(args.in_results):
-        if args.names:
-            if str(Path(result).parent) in names:
-                print("Loading: ", result)
-                results.append(np.load(result))
-        else:
-            print("Loading: ", result)
-            results.append(np.load(result))
-            names.append(str(Path(result).parent))
+        print("Loading: ", result)
+        results.append(np.load(result))
 
-    if args.whole_wm:
-        print("Loading: ", args.whole_wm)
-        whole_wm = np.load(args.whole_wm)
-        results.append(whole_wm)
-        names.append("WM")
-
-    nb_bins = len(results[0]['Angle_min'])
     nb_results = len(results)
 
-    # plot_init(font_size=8, dims=(10, 10))
+    plot_init(font_size=8, dims=(10, 10))
 
     for measure in args.measures:
         print(measure)
@@ -81,12 +51,6 @@ def main():
         for i, result in enumerate(results):
             to_analyse[i] = result[measure]
             to_analyse[i, result['Nb_voxels'] < min_nb_voxels] = np.nan
-
-        if args.variation:
-            coeff_var = scipy.stats.variation(to_analyse, axis=0)
-            print(np.nanmean(coeff_var))
-            out_path = out_dir / (measure + '_' + args.suffix + '_variation.txt')
-            np.savetxt(out_path, [np.nanmean(coeff_var) * 100])
 
         if args.is_bundles:
             dataset = pd.DataFrame(data=to_analyse.T)
