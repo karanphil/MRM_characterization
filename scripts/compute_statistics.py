@@ -1,13 +1,8 @@
 import argparse
-from cmcrameri import cm
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import numpy as np
 from pathlib import Path
 import pandas as pd
 import scipy.stats
-
-from modules.io import plot_init
 
 
 def _build_arg_parser():
@@ -73,8 +68,6 @@ def main():
     nb_bins = len(results[0]['Angle_min'])
     nb_results = len(results)
 
-    # plot_init(font_size=8, dims=(10, 10))
-
     for measure in args.measures:
         print(measure)
         to_analyse = np.zeros((nb_results, nb_bins))
@@ -93,17 +86,6 @@ def main():
             corr = dataset.corr()
             out_path = out_dir / (measure + '_' + args.suffix + '_correlation.txt')
             np.savetxt(out_path, corr)
-            # norm = mpl.colors.Normalize(vmin=np.min(corr), vmax=1)
-            # fig = plt.figure()
-            # ax = fig.add_subplot(111)
-            # cax = ax.matshow(corr, cmap=cm.navia_r, norm=norm)
-            # fig.colorbar(cax)
-            # ax.set_xticks(np.arange(0, nb_results, 1))
-            # ax.set_yticks(np.arange(0, nb_results, 1))
-            # ax.set_xticklabels(names, rotation=90)
-            # ax.set_yticklabels(names)
-            # plt.show()
-            # # plt.savefig("toto1.png", dpi=500,)
 
             variation_matrix = np.zeros((nb_results, nb_results))
             pair_array = np.zeros((2, nb_bins))
@@ -117,18 +99,6 @@ def main():
 
             out_path = out_dir / (measure + '_' + args.suffix + '_variation.txt')
             np.savetxt(out_path, variation_matrix * 100)
-
-            # norm = mpl.colors.Normalize(vmin=0, vmax=np.ceil(np.max(variation_matrix) * 100))
-            # fig = plt.figure()
-            # ax = fig.add_subplot(111)
-            # cax = ax.matshow(variation_matrix * 100, cmap=cm.navia, norm=norm)
-            # fig.colorbar(cax)
-            # ax.set_xticks(np.arange(0, nb_results, 1))
-            # ax.set_yticks(np.arange(0, nb_results, 1))
-            # ax.set_xticklabels(names, rotation=90)
-            # ax.set_yticklabels(names)
-            # plt.show()
-            # # plt.savefig("toto1.png", dpi=500,)
 
 
 if __name__ == "__main__":
