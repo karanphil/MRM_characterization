@@ -22,7 +22,7 @@ def _build_arg_parser():
     p.add_argument('--names', nargs='+',
                    help='List of names.')
 
-    p.add_argument('--mean', action='store_true')
+    p.add_argument('--mean', action='store_true') # Must be done one measure at the time.
 
     p.add_argument('--split', action='store_true')
 
@@ -57,18 +57,19 @@ def main():
         cmap = cm.navia
         cmap_label = "Variation coefficient"
 
-    plot_init(font_size=10, dims=(10, 4))
-
     mean_stats = np.mean(np.asarray(stats), axis=0)
     norm = mpl.colors.Normalize(vmin=np.min([np.min(mean_stats), np.min(stats)]),
                                 vmax=np.max([np.max(mean_stats), np.max(stats)]))
 
     if args.mean:
+        plot_init(font_size=10, dims=(10, 10))
+        norm = mpl.colors.Normalize(vmin=np.min(mean_stats), vmax=np.max(mean_stats))
         nb_rows = mean_stats.shape[0]
         fig = plt.figure()
         fig, ax = plt.subplots(1, 1, layout='constrained')
         cax = ax.matshow(mean_stats, cmap=cmap, norm=norm)
-        fig.colorbar(cax, location='right', label=cmap_label, aspect=100)
+        fig.colorbar(cax, location='right', label=cmap_label,  fraction=0.05, pad=0.04)
+        ax.tick_params(axis="x", bottom=True, top=False, labelbottom=True, labeltop=False)
         ax.set_xticks(np.arange(0, nb_rows, 1))
         ax.set_yticks(np.arange(0, nb_rows, 1))
         if args.names:
@@ -82,11 +83,13 @@ def main():
         np.savetxt(out_path, mean_stats)
 
     if args.split:
+        plot_init(font_size=10, dims=(10, 10))
         for i, stat in enumerate(stats):
             nb_rows = stat.shape[0]
             fig, ax = plt.subplots(1, 1, layout='constrained')
             cax = ax.matshow(stat, cmap=cmap, norm=norm)
-            fig.colorbar(cax, location='right', label=cmap_label, aspect=100)
+            fig.colorbar(cax, location='right', label=cmap_label, fraction=0.05, pad=0.04)
+            ax.tick_params(axis="x", bottom=True, top=False, labelbottom=True, labeltop=False)
             ax.set_xticks(np.arange(0, nb_rows, 1))
             ax.set_yticks(np.arange(0, nb_rows, 1))
             if args.names:
@@ -99,6 +102,7 @@ def main():
 
 
     if args.fused:
+        plot_init(font_size=10, dims=(10, 4))
         fig, ax = plt.subplots(1, len(stats), layout='constrained')
         for i, stat in enumerate(stats):
             nb_rows = stat.shape[0]
@@ -113,11 +117,10 @@ def main():
                     ax[i].set_yticklabels(args.names)
                 else:
                     ax[i].set_yticklabels('')
-        fig.colorbar(cax, ax=ax[-1], location='right', label=cmap_label, fraction=0.05, pad=0.04)#, aspect=100)
-        # fig.get_layout_engine().set(h_pad=0, hspace=0)
-        plt.show()
-        # out_path = out_dir / ('{}_{}_{}_{}.png').format(measure_name, args.suffix, sub_names[i], stat_name)
-        # plt.savefig(out_path, dpi=500)
+        fig.colorbar(cax, ax=ax[-1], location='right', label=cmap_label, fraction=0.05, pad=0.04)
+        # plt.show()
+        out_path = out_dir / ('all_measures_fused_{}_{}.png').format(args.suffix, stat_name)
+        plt.savefig(out_path, dpi=500)
 
 
 if __name__ == "__main__":

@@ -51,7 +51,7 @@ def main():
     results = []
     for i, result in enumerate(args.in_results):
         if args.names:
-            if str(Path(result).parent) in names:
+            if str(Path(result).parts[-2]) in names:
                 print("Loading: ", result)
                 results.append(np.load(result))
         else:
