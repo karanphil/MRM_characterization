@@ -57,7 +57,7 @@ def main():
         cmap = cm.navia
         cmap_label = "Variation coefficient"
 
-    mean_stats = np.mean(np.asarray(stats), axis=0)
+    mean_stats = np.nanmean(np.asarray(stats), axis=0)
     norm = mpl.colors.Normalize(vmin=np.min([np.min(mean_stats), np.min(stats)]),
                                 vmax=np.max([np.max(mean_stats), np.max(stats)]))
 

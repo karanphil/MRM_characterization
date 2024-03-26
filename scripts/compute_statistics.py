@@ -25,8 +25,6 @@ def _build_arg_parser():
     
     p.add_argument('--suffix', default='', type=str)
 
-    p.add_argument('--variation', action='store_true')
-
     p.add_argument('--is_bundles', action='store_true')
 
     g = p.add_argument_group(title='Characterization parameters')
@@ -75,12 +73,6 @@ def main():
             to_analyse[i] = result[measure]
             to_analyse[i, result['Nb_voxels'] < min_nb_voxels] = np.nan
 
-        if args.variation:
-            coeff_var = scipy.stats.variation(to_analyse, axis=0)
-            print(np.nanmean(coeff_var))
-            out_path = out_dir / (measure + '_' + args.suffix + '_variation.txt')
-            np.savetxt(out_path, [np.nanmean(coeff_var) * 100])
-
         if args.is_bundles:
             dataset = pd.DataFrame(data=to_analyse.T)
             corr = dataset.corr()
@@ -99,6 +91,11 @@ def main():
 
             out_path = out_dir / (measure + '_' + args.suffix + '_variation.txt')
             np.savetxt(out_path, variation_matrix * 100)
+
+        else:
+            coeff_var = scipy.stats.variation(to_analyse, axis=0)
+            out_path = out_dir / (measure + '_' + args.suffix + '_variation.txt')
+            np.savetxt(out_path, [np.nanmean(coeff_var) * 100])
 
 
 if __name__ == "__main__":
