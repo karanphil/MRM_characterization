@@ -26,6 +26,9 @@ def _build_arg_parser():
 
     p.add_argument('--whole_WM', default=[],
                    help='Path to the whole WM characterization.')
+    
+    p.add_argument('--out_name', default='toto.png',
+                   help='Name of the output file.')
 
     g = p.add_argument_group(title='Characterization parameters')
     g.add_argument('--min_nb_voxels', default=30, type=int,
@@ -65,9 +68,9 @@ def main():
         whole_wm = np.load(args.whole_WM)
         whole_mid_bins = (whole_wm['Angle_min'] + whole_wm['Angle_max']) / 2.
 
-    # if "MCP" in bundles_names:
-    #     bundles_names.remove("MCP")
-    #     bundles_names.append("MCP")
+    if "MCP" in bundles_names:
+        bundles_names.remove("MCP")
+        bundles_names.append("MCP")
 
     bundles_names.append("WM")
 
@@ -79,24 +82,35 @@ def main():
     highres_bins = np.arange(0, 90 + 1, 0.5)
 
     s_mtr = np.ones(nb_bundles) * 0.0005
-    s_mtr[5] = 0.001
+    s_mtr[2] = 0.001
+    s_mtr[5] = 0.0015
+    s_mtr[6] = 0.0002
+    s_mtr[7] = 0.00005
 
     s_mtsat = np.ones(nb_bundles) * 0.0005
-    s_mtsat[1] = 0.00001
+    s_mtsat[0] = 0.00001
+    s_mtsat[1] = 0.0001
+    s_mtsat[2] = 0.0001
+    s_mtsat[3] = 0.00005
     s_mtsat[5] = 0.0001
+    s_mtsat[6] = 0.00001 
+    s_mtsat[8] = 0.00001
+    s_mtsat[11] = 0.00005
 
     s_ihmtr = np.ones(nb_bundles) * 0.0005
-    s_ihmtr[1] = 0.0001
-    s_ihmtr[5] = 0.001
+    s_ihmtr[2] = 0.001
+    s_ihmtr[5] = 0.003
+    s_ihmtr[10] = 0.00005
 
     s_ihmtsat = np.ones(nb_bundles) * 0.0005
-    s_ihmtsat[1] = 0.000005
-    s_ihmtsat[2] = 0.00001
-    s_ihmtsat[7] = 0.000005
+    s_ihmtsat[3] = 0.00001
+    s_ihmtsat[5] = 0.00005
+    s_ihmtsat[7] = 0.000003
+    s_ihmtsat[10] = 0.000001
 
     # out_path = out_folder / str("all_bundles_original_1f_LABELS.png")
     # out_path = out_folder / str("all_bundles_original_1f.png")
-    out_path1 = out_folder / str("few_bundles_original_1f.png")
+    out_path1 = out_folder / args.out_name
     plot_init(dims=(8, 8), font_size=10)
     plt.rcParams['legend.fontsize'] = 8
     plt.rcParams['ytick.labelsize'] = 8
