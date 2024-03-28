@@ -105,19 +105,20 @@ def main():
 
     if args.along_measures:
         all_corrs = np.zeros(nb_results)
+        bundle_names = ''
         for j, result in enumerate(results):
+            bundle_names += names[j] + ' '
             to_analyse = np.zeros((nb_measures, nb_bins))
             for i, measure in enumerate(args.measures):
                 to_analyse[i] = result[measure]
                 to_analyse[i, result['Nb_voxels'] < min_nb_voxels] = np.nan
-                if args.is_bundles:
-                    dataset = pd.DataFrame(data=to_analyse.T)
-                    corr = dataset.corr()
-                    print(corr)
-                    all_corrs[j] = corr[0, 1]
+            if args.is_bundles:
+                dataset = pd.DataFrame(data=to_analyse.T)
+                corr = dataset.corr()
+                all_corrs[j] = corr[0][1]
 
         out_path = out_dir / ('intra_measure' + '_' + args.suffix + '_correlation.txt')
-        np.savetxt(out_path, corr, header=bundle_names)
+        np.savetxt(out_path, all_corrs, header=bundle_names)
 
 
 if __name__ == "__main__":
