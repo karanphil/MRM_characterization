@@ -27,6 +27,8 @@ def _build_arg_parser():
 
     p.add_argument('--is_bundles', action='store_true')
 
+    p.add_argument('--along_measures', action='store_true')
+
     g = p.add_argument_group(title='Characterization parameters')
     g.add_argument('--min_nb_voxels', default=30, type=int,
                    help='Value of the minimal number of voxels per bin '
@@ -65,37 +67,57 @@ def main():
 
     nb_bins = len(results[0]['Angle_min'])
     nb_results = len(results)
+    nb_measures = len(args.measures)
 
-    for measure in args.measures:
-        print(measure)
-        to_analyse = np.zeros((nb_results, nb_bins))
-        for i, result in enumerate(results):
-            to_analyse[i] = result[measure]
-            to_analyse[i, result['Nb_voxels'] < min_nb_voxels] = np.nan
+    if not args.along_measures:
+        for measure in args.measures:
+            print(measure)
+            to_analyse = np.zeros((nb_results, nb_bins))
+            bundle_names = ''
+            for i, result in enumerate(results):
+                to_analyse[i] = result[measure]
+                to_analyse[i, result['Nb_voxels'] < min_nb_voxels] = np.nan
+                bundle_names += names[i] + ' '
 
-        if args.is_bundles:
-            dataset = pd.DataFrame(data=to_analyse.T)
-            corr = dataset.corr()
-            out_path = out_dir / (measure + '_' + args.suffix + '_correlation.txt')
-            np.savetxt(out_path, corr)
+            if args.is_bundles:
+                dataset = pd.DataFrame(data=to_analyse.T)
+                corr = dataset.corr()
+                out_path = out_dir / (measure + '_' + args.suffix + '_correlation.txt')
+                np.savetxt(out_path, corr, header=bundle_names)
 
-            variation_matrix = np.zeros((nb_results, nb_results))
-            pair_array = np.zeros((2, nb_bins))
-            bundles_idx = np.flip(np.arange(1, nb_results, 1))
-            for b_idx in bundles_idx:
-                for next_b_idx in range(b_idx):
-                    pair_array[0] = to_analyse[b_idx]
-                    pair_array[1] = to_analyse[next_b_idx]
-                    variation_matrix[b_idx, next_b_idx] = np.nanmean(scipy.stats.variation(pair_array, axis=0))
-                    variation_matrix[next_b_idx, b_idx] = variation_matrix[b_idx, next_b_idx]
+                variation_matrix = np.zeros((nb_results, nb_results))
+                pair_array = np.zeros((2, nb_bins))
+                bundles_idx = np.flip(np.arange(1, nb_results, 1))
+                for b_idx in bundles_idx:
+                    for next_b_idx in range(b_idx):
+                        pair_array[0] = to_analyse[b_idx]
+                        pair_array[1] = to_analyse[next_b_idx]
+                        variation_matrix[b_idx, next_b_idx] = np.nanmean(scipy.stats.variation(pair_array, axis=0))
+                        variation_matrix[next_b_idx, b_idx] = variation_matrix[b_idx, next_b_idx]
 
-            out_path = out_dir / (measure + '_' + args.suffix + '_variation.txt')
-            np.savetxt(out_path, variation_matrix * 100)
+                out_path = out_dir / (measure + '_' + args.suffix + '_variation.txt')
+                np.savetxt(out_path, variation_matrix * 100, header=bundle_names)
 
-        else:
-            coeff_var = scipy.stats.variation(to_analyse, axis=0)
-            out_path = out_dir / (measure + '_' + args.suffix + '_variation.txt')
-            np.savetxt(out_path, [np.nanmean(coeff_var) * 100])
+            else:
+                coeff_var = scipy.stats.variation(to_analyse, axis=0)
+                out_path = out_dir / (measure + '_' + args.suffix + '_variation.txt')
+                np.savetxt(out_path, [np.nanmean(coeff_var) * 100])
+
+    if args.along_measures:
+        all_corrs = np.zeros(nb_results)
+        for j, result in enumerate(results):
+            to_analyse = np.zeros((nb_measures, nb_bins))
+            for i, measure in enumerate(args.measures):
+                to_analyse[i] = result[measure]
+                to_analyse[i, result['Nb_voxels'] < min_nb_voxels] = np.nan
+                if args.is_bundles:
+                    dataset = pd.DataFrame(data=to_analyse.T)
+                    corr = dataset.corr()
+                    print(corr)
+                    all_corrs[j] = corr[0, 1]
+
+        out_path = out_dir / ('intra_measure' + '_' + args.suffix + '_correlation.txt')
+        np.savetxt(out_path, corr, header=bundle_names)
 
 
 if __name__ == "__main__":

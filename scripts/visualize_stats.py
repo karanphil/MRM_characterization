@@ -48,6 +48,8 @@ def main():
         sub_names.append(str(Path(stat).parent.parent))
         measure_names.append(str(Path(stat).name).split('_')[0])
 
+    with open(args.in_stats[0]) as f:
+        names = f.readline().strip('\n').strip('#').split(' ')[1:]
     measure_name = str(Path(args.in_stats[0]).name).split('_')[0]
     stat_name = str(Path(args.in_stats[0]).name).split('_')[-1].split('.')[0]
     if stat_name == 'correlation':
@@ -72,9 +74,8 @@ def main():
         ax.tick_params(axis="x", bottom=True, top=False, labelbottom=True, labeltop=False)
         ax.set_xticks(np.arange(0, nb_rows, 1))
         ax.set_yticks(np.arange(0, nb_rows, 1))
-        if args.names:
-            ax.set_xticklabels(args.names, rotation=90)
-            ax.set_yticklabels(args.names)
+        ax.set_xticklabels(names, rotation=90)
+        ax.set_yticklabels(names)
         # plt.show()
         out_path = out_dir / ('{}_{}_mean_{}.png').format(measure_name, args.suffix, stat_name)
         plt.savefig(out_path, dpi=500)
@@ -92,9 +93,8 @@ def main():
             ax.tick_params(axis="x", bottom=True, top=False, labelbottom=True, labeltop=False)
             ax.set_xticks(np.arange(0, nb_rows, 1))
             ax.set_yticks(np.arange(0, nb_rows, 1))
-            if args.names:
-                ax.set_xticklabels(args.names, rotation=90)
-                ax.set_yticklabels(args.names)
+            ax.set_xticklabels(names, rotation=90)
+            ax.set_yticklabels(names)
             # plt.show()
             out_path = out_dir / ('{}_{}_{}_{}.png').format(measure_name, args.suffix,
                                                             sub_names[i], stat_name)
@@ -111,12 +111,11 @@ def main():
             ax[i].set_xticks(np.arange(0, nb_rows, 1))
             ax[i].set_yticks(np.arange(0, nb_rows, 1))
             ax[i].set_title(measure_names[i])
-            if args.names:
-                ax[i].set_xticklabels(args.names, rotation=90)
-                if i == 0:
-                    ax[i].set_yticklabels(args.names)
-                else:
-                    ax[i].set_yticklabels('')
+            ax[i].set_xticklabels(names, rotation=90)
+            if i == 0:
+                ax[i].set_yticklabels(names)
+            else:
+                ax[i].set_yticklabels('')
         fig.colorbar(cax, ax=ax[-1], location='right', label=cmap_label, fraction=0.05, pad=0.04)
         # plt.show()
         out_path = out_dir / ('all_measures_fused_{}_{}.png').format(args.suffix, stat_name)
