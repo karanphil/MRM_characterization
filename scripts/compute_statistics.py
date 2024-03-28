@@ -57,7 +57,7 @@ def main():
         else:
             print("Loading: ", result)
             results.append(np.load(result))
-            names.append(str(Path(result).parent))
+            names.append(str(Path(result).parent.name))
 
     if args.whole_wm:
         print("Loading: ", args.whole_wm)
@@ -117,7 +117,7 @@ def main():
                 corr = dataset.corr()
                 all_corrs[j] = corr[0][1]
 
-        out_path = out_dir / ('intra_measure' + '_' + args.suffix + '_correlation.txt')
+        out_path = out_dir / (args.suffix + 'intra_measure_correlation.txt')
         np.savetxt(out_path, all_corrs, header=bundle_names)
 
 
