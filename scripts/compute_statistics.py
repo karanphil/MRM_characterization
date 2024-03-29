@@ -49,15 +49,24 @@ def main():
     out_dir = Path(args.out_dir)
 
     results = []
+    result_MCP = None
     for i, result in enumerate(args.in_results):
         if args.names:
             if str(Path(result).parts[-2]) in names:
                 print("Loading: ", result)
                 results.append(np.load(result))
         else:
-            print("Loading: ", result)
-            results.append(np.load(result))
-            names.append(str(Path(result).parent.name))
+            if str(Path(result).parent.name) == 'MCP':
+                result_MCP = result
+            else:
+                print("Loading: ", result)
+                results.append(np.load(result))
+                names.append(str(Path(result).parent.name))
+
+    if result_MCP:
+        print("Loading: ", result_MCP)
+        results.append(np.load(result_MCP))
+        names.append(str(Path(result_MCP).parent.name))
 
     if args.whole_wm:
         print("Loading: ", args.whole_wm)
