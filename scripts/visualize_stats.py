@@ -51,6 +51,7 @@ def main():
     mean_stats = np.nanmean(np.asarray(stats), axis=0)
 
     with open(args.in_stats[0]) as f:
+        header = f.readline().strip('\n').strip('#')
         names = f.readline().strip('\n').strip('#').split(' ')[1:-1]
     measure_name = str(Path(args.in_stats[0]).name).split('_')[0]
     stat_name = str(Path(args.in_stats[0]).name).split('_')[-1].split('.')[0]
@@ -85,7 +86,7 @@ def main():
         # plt.savefig(out_path, dpi=500)
 
         out_path = out_dir / ('{}_{}_mean_{}.txt').format(measure_name, args.suffix, stat_name)
-        np.savetxt(out_path, mean_stats)
+        np.savetxt(out_path, mean_stats, header=header)
 
     if args.split:
         plot_init(font_size=10, dims=(10, 10))
