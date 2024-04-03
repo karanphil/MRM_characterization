@@ -51,8 +51,8 @@ def main():
     mean_stats = np.nanmean(np.asarray(stats), axis=0)
 
     with open(args.in_stats[0]) as f:
-        header = f.readline().strip('\n').strip('#')
         names = f.readline().strip('\n').strip('#').split(' ')[1:-1]
+    names.remove("")
     measure_name = str(Path(args.in_stats[0]).name).split('_')[0]
     stat_name = str(Path(args.in_stats[0]).name).split('_')[-1].split('.')[0]
     if stat_name == 'correlation':
@@ -84,6 +84,8 @@ def main():
         # # plt.show()
         # out_path = out_dir / ('{}_{}_mean_{}.png').format(measure_name, args.suffix, stat_name)
         # plt.savefig(out_path, dpi=500)
+        with open(args.in_stats[0]) as f:
+            header = f.readline().strip('\n').strip('#')
 
         out_path = out_dir / ('{}_{}_mean_{}.txt').format(measure_name, args.suffix, stat_name)
         np.savetxt(out_path, mean_stats, header=header)
