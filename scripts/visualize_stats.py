@@ -126,9 +126,9 @@ def main():
             else:
                 ax[i].set_yticklabels('')
         fig.colorbar(cax, ax=ax[-1], location='right', label=cmap_label, fraction=0.05, pad=0.04)
-        plt.show()
+        # plt.show()
         out_path = out_dir / ('all_measures_fused_{}_{}.png').format(args.suffix, stat_name)
-        #plt.savefig(out_path, dpi=500)
+        plt.savefig(out_path, dpi=500)
 
 
 if __name__ == "__main__":
