@@ -68,6 +68,7 @@ def main():
         norm = mpl.colors.Normalize(vmin=0,
                                     vmax=np.nanmax([np.nanmax(mean_stats), np.nanmax(stats)]))
 
+    # cmap = cm.roma or cm.vik_r for diverging gradients (correlation)
     # norm = mpl.colors.Normalize(vmin=np.nanmin([np.nanmin(mean_stats), np.nanmin(stats)]),
     #                             vmax=np.nanmax([np.nanmax(mean_stats), np.nanmax(stats)]))
 
