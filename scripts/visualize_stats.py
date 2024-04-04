@@ -52,7 +52,8 @@ def main():
 
     with open(args.in_stats[0]) as f:
         names = f.readline().strip('\n').strip('#').split(' ')[1:-1]
-    names.remove("")
+    if "" in names:
+        names.remove("")
     measure_name = str(Path(args.in_stats[0]).name).split('_')[0]
     stat_name = str(Path(args.in_stats[0]).name).split('_')[-1].split('.')[0]
     if stat_name == 'correlation':
