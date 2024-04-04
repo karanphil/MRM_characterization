@@ -28,6 +28,8 @@ def _build_arg_parser():
 
     p.add_argument('--fused', action='store_true')
 
+    p.add_argument('--single_line', action='store_true')
+
     p.add_argument('--suffix', default='', type=str)
 
     return p
@@ -108,7 +110,6 @@ def main():
                                                             sub_names[i], stat_name)
             plt.savefig(out_path, dpi=500)
 
-
     if args.fused:
         nb_rows = stats[0].shape[0]
         font_size = 6 if nb_rows > 15 else 10
@@ -130,6 +131,30 @@ def main():
         # plt.show()
         out_path = out_dir / ('all_measures_fused_{}_{}.png').format(args.suffix, stat_name)
         plt.savefig(out_path, dpi=500)
+
+    if args.single_line:
+        for i, stat in enumerate(stats):
+            stat = stat.reshape((1, stat.shape[0]))
+            nb_rows = stat.shape[1]
+            font_size = 6 if nb_rows > 15 else 10
+            width = 16 if nb_rows > 15 else 10
+            plot_init(font_size=10, dims=(10, 2))
+            fig, ax = plt.subplots(1, 1, layout='constrained')
+            cax = ax.matshow(stat, cmap=cmap, norm=norm)
+            # fig.colorbar(cax, location='right', label=cmap_label, fraction=0.05, pad=0.04)
+            ax.tick_params(axis="x", bottom=True, top=False, labelbottom=True, labeltop=False)
+            ax.set_xticks(np.arange(0, nb_rows, 1))
+            ax.set_yticks([])
+            ax.set_xticklabels(names, rotation=90)
+            #ax.set_yticklabels("MT")
+            # ax.set_ylabel("WM", rotation=90)
+            if measure_name == "MT":
+                ax.set_title("MTR vs MTsat")
+            if measure_name == "ihMT":
+                ax.set_title("ihMTR vs ihMTsat")
+            # plt.show()
+            out_path = out_dir / ('{}_{}_{}.png').format(measure_name, args.suffix, stat_name)
+            plt.savefig(out_path, dpi=500)
 
 
 if __name__ == "__main__":
