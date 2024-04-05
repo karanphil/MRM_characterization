@@ -169,6 +169,12 @@ def main():
         mtsat_fit = splrep(mid_bins[is_not_nan], mtsat_diag[i, is_not_nan], w=weights, s=0.001)
         ihmtr_fit = splrep(mid_bins[is_not_nan], ihmtr_diag[i, is_not_nan], w=weights, s=0.0001)
         ihmtsat_fit = splrep(mid_bins[is_not_nan], ihmtsat_diag[i, is_not_nan], w=weights, s=0.000001)
+        
+        if i == 0:
+            mtr_fit_2f = mtr_fit
+            mtsat_fit_2f = mtsat_fit
+            ihmtr_fit_2f = ihmtr_fit
+            ihmtsat_fit_2f = ihmtsat_fit
 
         ax[0, 0].plot(highres_bins, BSpline(*mtr_fit)(highres_bins), "--", color=cm.naviaS(i+2))
         ax[0, 1].plot(highres_bins, BSpline(*ihmtr_fit)(highres_bins), "--", color=cm.naviaS(i+2))
@@ -233,6 +239,12 @@ def main():
         fig, ax = plt.subplots(2, 2,
                             gridspec_kw={"width_ratios":[1, 1]},
                             layout='constrained')
+
+        ax[0, 0].plot(highres_bins, BSpline(*mtr_fit_2f)(highres_bins), "--", color='dimgrey', alpha=0.5)
+        ax[0, 1].plot(highres_bins, BSpline(*ihmtr_fit_2f)(highres_bins), "--", color='dimgrey', alpha=0.5)
+        ax[1, 0].plot(highres_bins, BSpline(*mtsat_fit_2f)(highres_bins), "--", color='dimgrey', alpha=0.5)
+        ax[1, 1].plot(highres_bins, BSpline(*ihmtsat_fit_2f)(highres_bins), "--", color='dimgrey', alpha=0.5)
+
         for i in range(mtr_3f.shape[0]):
             is_measures = nb_voxels_3f[i] >= min_nb_voxels
             is_not_measures = np.invert(is_measures)
