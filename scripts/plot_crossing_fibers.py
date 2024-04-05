@@ -7,7 +7,6 @@ from pathlib import Path
 from scipy.interpolate import splrep, BSpline
 
 from modules.io import plot_init
-from modules.orientation_dependence import analyse_delta_m_max
 
 
 def _build_arg_parser():
@@ -21,9 +20,6 @@ def _build_arg_parser():
     
     p.add_argument('--in_3f_results',
                    help='Results file for the crossing fibers analysis.')
-    
-    p.add_argument('--delta_max', action="store_true",
-                   help='Plot delta_max or not.')
 
     g = p.add_argument_group(title='Characterization parameters')
     g.add_argument('--min_nb_voxels', default=30, type=int,
@@ -201,33 +197,14 @@ def main():
     ax[0, 1].legend(loc=1)
     ax[0, 1].get_legend().set_title(r"Peak$_1$ fraction")
 
-    if args.delta_max:
-        sf_delta_m_max = 2.52904729
-        slope, origin, delta_max, frac_thrs_mid, min_bins, max_bins =\
-            analyse_delta_m_max(bins, mtr_diag.reshape((mtr_diag.shape) + (1,)),
-                                sf_delta_m_max, nb_voxels_diag)
-
-        # this is an inset axes over the main axes
-        highres_frac = np.arange(0, 1.01, 0.01)
-        # ax = inset_axes(ax1,
-        #                 bbox_to_anchor=[0.2, 0.2, 0.2, 0.2],
-        #                 width="50%", # width = 40% of parent_bbox
-        #                 height=1.0) # height : 1 inch
-        #                 # loc=2)
-        ax2 = plt.axes([0.22, 0.88, 0.1, 0.1])
-        for i in range(len(frac_thrs_mid) - 1):
-            ax2.scatter(frac_thrs_mid[i], delta_max[i], color="C" + str(i),
-                        linewidths=1)
-        ax2.scatter(frac_thrs_mid[-1], delta_max[-1], color="black",
-                    linewidths=1)
-        ax2.plot(highres_frac,
-                slope * highres_frac + origin,
-                "--",
-                color="grey")
-        ax2.set_xlabel(r'Peak$_1$ fraction', labelpad=-2)
-        xlim=[0, 1.03]
-        ax2.set_xlim(xlim[0], xlim[1])
-        ax2.set_ylabel( r'$\delta m_{max}$', labelpad=0)
+    ax[0, 0].text(0.751, 0.125, "CVb=2.05%", transform=ax[0, 0].transAxes, size=10)
+    ax[0, 0].text(0.75, 0.025, "CVw=1.07%", transform=ax[0, 0].transAxes, size=10)
+    ax[1, 0].text(0.751, 0.125, "CVb=5.25%", transform=ax[1, 0].transAxes, size=10)
+    ax[1, 0].text(0.75, 0.025, "CVw=1.85%", transform=ax[1, 0].transAxes, size=10)
+    ax[0, 1].text(0.0251, 0.125, "CVb=6.87%", transform=ax[0, 1].transAxes, size=10)
+    ax[0, 1].text(0.0251, 0.025, "CVw=4.34%", transform=ax[0, 1].transAxes, size=10)
+    ax[1, 1].text(0.025, 0.125, "CVb=7.37%", transform=ax[1, 1].transAxes, size=10)
+    ax[1, 1].text(0.025, 0.025, "CVw=5.23%", transform=ax[1, 1].transAxes, size=10)
 
     fig.colorbar(colorbar, ax=ax[:, 1], location='right', label="Voxel count")
     # fig.tight_layout()

@@ -29,6 +29,8 @@ def _build_arg_parser():
 
     p.add_argument('--along_measures', action='store_true')
 
+    p.add_argument('--crossing', action='store_true')
+
     g = p.add_argument_group(title='Characterization parameters')
     g.add_argument('--min_nb_voxels', default=30, type=int,
                    help='Value of the minimal number of voxels per bin '
@@ -77,6 +79,22 @@ def main():
     nb_bins = len(results[0]['Angle_min'])
     nb_results = len(results)
     nb_measures = len(args.measures)
+
+    if args.crossing:
+        for measure in args.measures:
+            print(measure)
+            coeff_vars = np.zeros((4, nb_bins))
+            for j, frac in enumerate(range(4)):
+                to_analyse = np.zeros((nb_results, nb_bins))
+                for i, result in enumerate(results):
+                    to_analyse[i] = np.diagonal(result[measure][frac])
+                    to_analyse[i, np.diagonal(result['Nb_voxels'][frac]) < min_nb_voxels] = np.nan
+                coeff_vars[j] = scipy.stats.variation(to_analyse, axis=0)
+            coeff_var = np.nanmean(coeff_vars, axis=0)
+
+            out_path = out_dir / (measure + '_' + args.suffix + '_variation.txt')
+            np.savetxt(out_path, [np.nanmean(coeff_var) * 100])
+        return 0
 
     if not args.along_measures:
         for measure in args.measures:

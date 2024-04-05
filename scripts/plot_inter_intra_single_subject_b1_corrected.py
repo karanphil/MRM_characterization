@@ -423,7 +423,7 @@ def main():
     # fig.tight_layout()
     # plt.show()
     plt.savefig(args.out_name, dpi=500)
-    # plt.close()
+    plt.close()
 
 
 if __name__ == "__main__":
