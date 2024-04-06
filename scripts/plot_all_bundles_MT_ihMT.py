@@ -32,6 +32,8 @@ def _build_arg_parser():
 
     p.add_argument('--measures', default='MT')
 
+    p.add_argument('--corr')  
+
     g = p.add_argument_group(title='Characterization parameters')
     g.add_argument('--min_nb_voxels', default=30, type=int,
                    help='Value of the minimal number of voxels per bin '
@@ -75,6 +77,10 @@ def main():
         bundles_names.append("MCP")
 
     bundles_names.append("WM")
+
+    mt_corr = None
+    if args.corr:
+        mt_corr = np.loadtxt(args.corr)
 
     nb_bundles = len(bundles_names)
     nb_rows = int(np.ceil(nb_bundles / 2))
@@ -258,6 +264,16 @@ def main():
                                          np.round(np.nanmax(whole_wm[measures[1]]), decimals=1)])
             ax[row, col + 1].set_xlim(0, 90)
 
+        ax[row, col + 1].yaxis.set_label_position("right")
+        ax[row, col + 1].yaxis.tick_right()
+
+        # PCC
+        if args.corr:
+            ax[0, col].text(1.015, 1.03, "PCC", color="dimgrey",
+                          transform=ax[0, col].transAxes, size=8)
+            ax[row, col].text(1.015, 0.45, f'{np.around(mt_corr[i], decimals=2):.2f}',
+                            transform=ax[row, col].transAxes, size=8, color="dimgrey")
+
         ax[row, col].yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
 
         # if col == 0:
@@ -305,6 +321,11 @@ def main():
     # if nb_bundles % 2 != 0:
     #     ax[nb_rows - 1, 1].set_yticks([])
     fig.get_layout_engine().set(h_pad=0, hspace=0)
+    if 'MTR' in measures:
+        line = plt.Line2D([0.45, 0.45], [0.035,0.985], transform=fig.transFigure, color="black", linestyle=(0, (5, 5)), alpha=0.7)
+    if 'ihMTR' in measures:
+        line = plt.Line2D([0.458, 0.458], [0.035,0.985], transform=fig.transFigure, color="black", linestyle=(0, (5, 5)), alpha=0.7)
+    fig.add_artist(line)
     # plt.show()
     plt.savefig(out_path1, dpi=500, bbox_inches='tight')
     plt.close()
