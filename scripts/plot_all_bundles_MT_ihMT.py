@@ -351,7 +351,7 @@ def main():
     #     ax[nb_rows - 1, 1].set_yticks([])
     fig.get_layout_engine().set(h_pad=0, hspace=0)
     if 'MTR' in measures:
-        line = plt.Line2D([0.45, 0.45], [0.035,0.985], transform=fig.transFigure, color="black", linestyle=(0, (5, 5)), alpha=0.7)
+        line = plt.Line2D([0.455, 0.455], [0.035,0.985], transform=fig.transFigure, color="black", linestyle=(0, (5, 5)), alpha=0.7)
     if 'ihMTR' in measures:
         line = plt.Line2D([0.458, 0.458], [0.035,0.985], transform=fig.transFigure, color="black", linestyle=(0, (5, 5)), alpha=0.7)
     fig.add_artist(line)
