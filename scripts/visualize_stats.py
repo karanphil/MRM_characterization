@@ -1,5 +1,6 @@
 import argparse
 from cmcrameri import cm
+from matplotlib.ticker import FormatStrFormatter
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -60,15 +61,15 @@ def main():
     stat_name = str(Path(args.in_stats[0]).name).split('_')[-1].split('.')[0]
     if stat_name == 'correlation':
         cmap = cm.navia_r
-        cmap_label = "Correlation coefficient"
+        cmap_label = "Pearson correlation coefficient"
         norm = mpl.colors.Normalize(vmin=-1, vmax=1)
     elif stat_name == 'variation':
         cmap = cm.navia
-        cmap_label = "Variation coefficient"
+        cmap_label = "Coefficient of variation (%)"
         norm = mpl.colors.Normalize(vmin=0,
                                     vmax=np.nanmax([np.nanmax(mean_stats), np.nanmax(stats)]))
 
-    # cmap = cm.roma or cm.vik_r for diverging gradients (correlation)
+    # cmap = cm.roma # or cm.vik_r for diverging gradients (correlation)
     # norm = mpl.colors.Normalize(vmin=np.nanmin([np.nanmin(mean_stats), np.nanmin(stats)]),
     #                             vmax=np.nanmax([np.nanmax(mean_stats), np.nanmax(stats)]))
 
@@ -115,7 +116,7 @@ def main():
         nb_rows = stats[0].shape[0]
         font_size = 6 if nb_rows > 15 else 10
         width = 16 if nb_rows > 15 else 10
-        plot_init(font_size=font_size, dims=(width, 4))
+        plot_init(font_size=10, dims=(width, 4))
         fig, ax = plt.subplots(1, len(stats), layout='constrained')
         for i, stat in enumerate(stats):
             cax = ax[i].matshow(stat, cmap=cmap, norm=norm)
@@ -123,12 +124,19 @@ def main():
             ax[i].set_xticks(np.arange(0, nb_rows, 1))
             ax[i].set_yticks(np.arange(0, nb_rows, 1))
             ax[i].set_title(measure_names[i])
-            ax[i].set_xticklabels(names, rotation=90)
+            ax[i].set_xticklabels(names, rotation=90, fontsize=font_size)
             if i == 0:
-                ax[i].set_yticklabels(names)
+                ax[i].set_yticklabels(names, fontsize=font_size)
             else:
                 ax[i].set_yticklabels('')
-        fig.colorbar(cax, ax=ax[-1], location='right', label=cmap_label, fraction=0.05, pad=0.04)
+        if stat_name == "correlation":
+            pad = 0.04
+        elif stat_name == "variation" and "all" in args.suffix:
+            pad = 0.035
+        elif stat_name == "variation" and "few" in args.suffix:
+            pad = 0.06
+        fig.colorbar(cax, ax=ax[-1], location='right', label=cmap_label,
+                     fraction=0.05, pad=pad, format=FormatStrFormatter('%.1f'))
         # plt.show()
         out_path = out_dir / ('all_measures_fused_{}_{}.png').format(args.suffix, stat_name)
         plt.savefig(out_path, dpi=500)

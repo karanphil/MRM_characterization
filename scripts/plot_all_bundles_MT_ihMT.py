@@ -72,6 +72,11 @@ def main():
         whole_wm = np.load(args.whole_WM)
         whole_mid_bins = (whole_wm['Angle_min'] + whole_wm['Angle_max']) / 2.
 
+    if "ICP_L" in bundles_names:
+        bundles_names.remove("ICP_L")
+    if "ICP_R" in bundles_names:
+        bundles_names.remove("ICP_R")
+
     if "MCP" in bundles_names:
         bundles_names.remove("MCP")
         bundles_names.append("MCP")
@@ -99,14 +104,20 @@ def main():
         s_r[13] = 0.00005 # CR_R
         s_r[14] = 0.0002 # CST_L
         s_r[15] = 0.00005 # CST_R
-        s_r[16] = 0.01 # ICP_L
-        s_r[17] = 0.05 # ICP_R
-        s_r[20] = 0.0001 # ILF_L
-        s_r[21] = 0.00003 # IFL_R
-        s_r[24] = 0.01 # SLF_1_L
-        s_r[26] = 0.005 # SLF_2_L
-        s_r[28] = 0.005 # SLF_3_L
-        s_r[29] = 0.005 # SLF_3_R
+        s_r[18] = 0.0001 # ILF_L
+        s_r[19] = 0.00003 # IFL_R
+        s_r[22] = 0.01 # SLF_1_L
+        s_r[24] = 0.005 # SLF_2_L
+        s_r[26] = 0.005 # SLF_3_L
+        s_r[27] = 0.005 # SLF_3_R
+        # s_r[16] = 0.01 # ICP_L
+        # s_r[17] = 0.05 # ICP_R
+        # s_r[20] = 0.0001 # ILF_L
+        # s_r[21] = 0.00003 # IFL_R
+        # s_r[24] = 0.01 # SLF_1_L
+        # s_r[26] = 0.005 # SLF_2_L
+        # s_r[28] = 0.005 # SLF_3_L
+        # s_r[29] = 0.005 # SLF_3_R
 
         s_sat[0] = 0.00001 # AF_L
         s_sat[1] = 0.0001 # AF_R
@@ -115,14 +126,20 @@ def main():
         s_sat[11] = 0.0001 # CG_R
         s_sat[12] = 0.00001 # CR_L
         s_sat[14] = 0.00001 # CST_L
-        s_sat[16] = 0.005 # ICP_L
-        s_sat[17] = 0.05 # ICP_R
-        s_sat[18] = 0.00001 # IFOF_L
-        s_sat[20] = 0.00001 # ILF_L
-        s_sat[23] = 0.00005 # OR_R
-        s_sat[26] = 0.0001 # SLF_2_L
-        s_sat[30] = 0.0001 # UF_L
-        s_sat[32] = 0.0003 # MCP
+        s_sat[16] = 0.00001 # IFOF_L
+        s_sat[18] = 0.00001 # ILF_L
+        s_sat[21] = 0.00005 # OR_R
+        s_sat[24] = 0.0001 # SLF_2_L
+        s_sat[28] = 0.0001 # UF_L
+        s_sat[30] = 0.0003 # MCP
+        # s_sat[16] = 0.005 # ICP_L
+        # s_sat[17] = 0.05 # ICP_R
+        # s_sat[18] = 0.00001 # IFOF_L
+        # s_sat[20] = 0.00001 # ILF_L
+        # s_sat[23] = 0.00005 # OR_R
+        # s_sat[26] = 0.0001 # SLF_2_L
+        # s_sat[30] = 0.0001 # UF_L
+        # s_sat[32] = 0.0003 # MCP
 
     if args.measures == 'ihMT':
         measures = ['ihMTR', 'ihMTsat']
@@ -130,14 +147,20 @@ def main():
 
         s_r[5] = 0.001 # CC_3
         s_r[11] = 0.003 # CG_R
-        s_r[16] = 0.005 # ICP_L
-        s_r[17] = 0.05 # ICP_R
-        s_r[20] = 0.00005 # ILF_L
-        s_r[22] = 0.00005 # OR_L
-        s_r[24] = 0.05 # SLF_1_L
-        s_r[28] = 0.005 # SLF_3_L
-        s_r[30] = 0.005 # UF_L
-        s_r[31] = 0.005 # UF_R
+        s_r[18] = 0.00005 # ILF_L
+        s_r[20] = 0.00005 # OR_L
+        s_r[22] = 0.05 # SLF_1_L
+        s_r[26] = 0.005 # SLF_3_L
+        s_r[28] = 0.005 # UF_L
+        s_r[29] = 0.005 # UF_R
+        # s_r[16] = 0.005 # ICP_L
+        # s_r[17] = 0.05 # ICP_R
+        # s_r[20] = 0.00005 # ILF_L
+        # s_r[22] = 0.00005 # OR_L
+        # s_r[24] = 0.05 # SLF_1_L
+        # s_r[28] = 0.005 # SLF_3_L
+        # s_r[30] = 0.005 # UF_L
+        # s_r[31] = 0.005 # UF_R
 
         s_sat[2] = 0.00001 # CC_1
         s_sat[6] = 0.00001 # CC_4
@@ -147,13 +170,19 @@ def main():
         s_sat[11] = 0.00005 # CG_R
         s_sat[13] = 0.000005 # CR_R
         s_sat[15] = 0.000003 # CST_R
-        s_sat[17] = 0.001 # ICP_R
-        s_sat[20] = 0.000001 # ILF_L
-        s_sat[22] = 0.000001 # OR_L
-        s_sat[25] = 0.00001 # SLF_1_R
-        s_sat[27] = 0.00001 # SLF_2_R
-        s_sat[29] = 0.00005 # SLF_3_R
-        s_sat[32] = 0.00001 # MCP
+        s_sat[18] = 0.000001 # ILF_L
+        s_sat[20] = 0.000001 # OR_L
+        s_sat[23] = 0.00001 # SLF_1_R
+        s_sat[25] = 0.00001 # SLF_2_R
+        s_sat[27] = 0.00005 # SLF_3_R
+        s_sat[30] = 0.00001 # MCP
+        # s_sat[17] = 0.001 # ICP_R
+        # s_sat[20] = 0.000001 # ILF_L
+        # s_sat[22] = 0.000001 # OR_L
+        # s_sat[25] = 0.00001 # SLF_1_R
+        # s_sat[27] = 0.00001 # SLF_2_R
+        # s_sat[29] = 0.00005 # SLF_3_R
+        # s_sat[32] = 0.00001 # MCP
 
     mid_bins = (results[0]['Angle_min'] + results[0]['Angle_max']) / 2.
     highres_bins = np.arange(0, 90 + 1, 0.5)

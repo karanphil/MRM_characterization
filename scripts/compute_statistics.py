@@ -60,7 +60,7 @@ def main():
         else:
             if str(Path(result).parent.name) == 'MCP':
                 result_MCP = result
-            else:
+            elif str(Path(result).parent.name) != 'ICP_L' and str(Path(result).parent.name) != 'ICP_R':
                 print("Loading: ", result)
                 results.append(np.load(result))
                 names.append(str(Path(result).parent.name))
