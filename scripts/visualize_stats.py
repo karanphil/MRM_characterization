@@ -65,6 +65,8 @@ def main():
         cmap = cm.vik_r
         # cmap = cm.bam
         # cmap_label = "Pearson correlation coefficient"
+        # cmap_label = "Within-subject mean PCC"
+        # cmap_label = "Between-subject mean PCC"
         cmap_label = "PCC"
         norm = mpl.colors.Normalize(vmin=-1, vmax=1)
     elif stat_name == 'variation':
