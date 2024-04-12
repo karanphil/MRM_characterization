@@ -60,8 +60,12 @@ def main():
     measure_name = str(Path(args.in_stats[0]).name).split('_')[0]
     stat_name = str(Path(args.in_stats[0]).name).split('_')[-1].split('.')[0]
     if stat_name == 'correlation':
-        cmap = cm.navia_r
-        cmap_label = "Pearson correlation coefficient"
+        # cmap = cm.navia_r
+        # cmap = cm.roma # or cm.vik_r for diverging gradients (correlation)
+        cmap = cm.vik_r
+        # cmap = cm.bam
+        # cmap_label = "Pearson correlation coefficient"
+        cmap_label = "PCC"
         norm = mpl.colors.Normalize(vmin=-1, vmax=1)
     elif stat_name == 'variation':
         cmap = cm.navia
@@ -123,7 +127,7 @@ def main():
             ax[i].tick_params(axis="x", bottom=True, top=False, labelbottom=True, labeltop=False)
             ax[i].set_xticks(np.arange(0, nb_rows, 1))
             ax[i].set_yticks(np.arange(0, nb_rows, 1))
-            ax[i].set_title(measure_names[i])
+            ax[i].set_title(measure_names[i], fontsize=12)
             ax[i].set_xticklabels(names, rotation=90, fontsize=font_size)
             if i == 0:
                 ax[i].set_yticklabels(names, fontsize=font_size)
@@ -135,8 +139,9 @@ def main():
             pad = 0.035
         elif stat_name == "variation" and "few" in args.suffix:
             pad = 0.06
-        fig.colorbar(cax, ax=ax[-1], location='right', label=cmap_label,
+        clb = fig.colorbar(cax, ax=ax[-1], location='right',
                      fraction=0.05, pad=pad, format=FormatStrFormatter('%.1f'))
+        clb.ax.set_title(cmap_label, fontsize=12) # remove if variation
         # plt.show()
         out_path = out_dir / ('all_measures_fused_{}_{}.png').format(args.suffix, stat_name)
         plt.savefig(out_path, dpi=500)
