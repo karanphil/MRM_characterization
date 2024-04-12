@@ -141,7 +141,7 @@ def main():
             pad = 0.06
         clb = fig.colorbar(cax, ax=ax[-1], location='right',
                      fraction=0.05, pad=pad, format=FormatStrFormatter('%.1f'))
-        clb.ax.set_title(cmap_label, fontsize=12) # remove if variation
+        clb.ax.set_ylabel(cmap_label, fontsize=12) # remove if variation
         # plt.show()
         out_path = out_dir / ('all_measures_fused_{}_{}.png').format(args.suffix, stat_name)
         plt.savefig(out_path, dpi=500)
