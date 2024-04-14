@@ -1,0 +1,27 @@
+wdir="/home/pkaran/Samsung/data/MT_Diffusion/myelo_inferno";
+# wdir="/home/local/USHERBROOKE/karp2601/Samsung/data/MT_Diffusion/myelo_inferno";
+# wdir="/home/local/USHERBROOKE/karp2601/data/stockage/MT_Diffusion/myelo_inferno";
+source_dir="source";
+# source_dir="Research/source";
+types=("intra_subject_w_b1" "inter_subject_w_b1");
+measures=("MT" "ihMT");
+# nb_bundles=("few" "all");
+nb_bundles=("few");
+stats=("correlation")
+out_file="measures_correlations.txt";
+cd $wdir;
+for type in "${types[@]}";
+    do echo $type;
+    all_subs=(sub-0*);
+    for measure in "${measures[@]}";
+        do echo $measure;
+        for nb_bundle in "${nb_bundles[@]}";
+            do echo $nb_bundle;
+            for stat in "${stats[@]}";
+                do echo $stat;
+                # echo ${type}_${measure}_${nb_bundle}_bundles_${stat} >> $out_file;
+                python ~/$source_dir/MRM_characterization/scripts/compute_correlation_between_vectors.py ${wdir}/intra_subject_w_b1/characterization/bundles_5deg_bins/sub-026-hc_ses-3/stats/${measure}_${nb_bundle}_bundles_intra_measure_${stat}.txt ${wdir}/$type/characterization/bundles_5deg_bins/stats/${measure}_${nb_bundle}_bundles_intra_measure_mean_${stat}.txt; #  >> $out_file;
+            done;
+        done;
+    done;
+done;
