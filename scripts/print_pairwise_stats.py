@@ -46,7 +46,7 @@ def main():
         interpret = np.empty(len(diag), dtype=object)
         interpret[diag >= 0.7] = "strong"
         interpret[diag < 0.7] = "moderate"
-        interpret[diag < 0.3] = "low"
+        interpret[diag < 0.4] = "low"
 
         print(np.round(diag, decimals=2))
         print(interpret)
@@ -58,7 +58,7 @@ def main():
         interpret = np.empty(len(stats), dtype=object)
         interpret[stats >= 0.7] = "strong"
         interpret[stats < 0.7] = "moderate"
-        interpret[stats < 0.3] = "low"
+        interpret[stats < 0.4] = "low"
 
         for i in range(len(names)):
             print(names[i], " : ", interpret[i], " --- ",
