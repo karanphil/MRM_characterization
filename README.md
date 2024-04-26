@@ -24,7 +24,8 @@ INSTALLATION AND USAGE:
 While it is not mandatory, we strongly suggest to install the scilpy library in order
 to have all the dependencies necessary. First, clone the scilpy repository
 (https://github.com/scilus/scilpy), and follow the instructions for installation,
-also available on this github page.
+also available on this github page. It is now also possible to install scilpy directly
+with pip install scilpy.
 The only missing package should be cmcrameri for colormaps, which can be
 installed with "pip install cmcrameri".
 
